@@ -1,0 +1,18 @@
+This project is an example project for packaging an ip from an existing verilog function.
+
+this project packages the burst mode preamble/delimiter sync function to an ip with AXIS interface.
+
+inputs and outputs are converted to AXIS compatible interface.
+
+a copy of the packaged IP is already available in ${topdir}/sources/ip_sources in order to recreate the IP
+
+To recreate the IP pacakge, follow this step:
+	
+	-Open vivado project navigator
+	-move to packaging project scripts directory in the TCL command window
+		cd ${topdir}/sources/vavado_packging_srcs/BurstModeSyncIPpackagingProj/scripts/
+	-run the projRecreate.tcl in the TCL command window
+		source ./projRecreate.tcl
+	
+	
+A copy of the newly generated IP will be there in the ${topdir}/sources/vavado_packging_srcs/BurstModeSyncIPpackagingProj/ip_repo/ directory
