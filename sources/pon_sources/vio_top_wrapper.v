@@ -28,6 +28,10 @@ module vio_top_wrapper(
 	,output wire [0:0] b2bcontrol
 	,output wire [2:0] gt_loopback_control
 	,output wire [0:0] eth_sys_reset_vio
+	,input wire eth_rx_gt_locked_led     // Indicates GT LOCK
+    ,input wire eth_rx_block_lock_led    // Indicates Core Block Lock
+    ,input wire [4:0] eth_completion_status
+
     );
     
  
@@ -43,6 +47,9 @@ module vio_top_wrapper(
     // User Guide: Programming and Debugging (UG908)
     vio_top vio_top_inst (
       .clk (hb0_gtwiz_userclk_tx_usrclk2_int)
+      ,.probe_in0(eth_rx_gt_locked_led)    // input wire [0 : 0] probe_in0
+      ,.probe_in1(eth_rx_block_lock_led)    // input wire [0 : 0] probe_in1
+      ,.probe_in2(eth_completion_status)    // input wire [4 : 0] probe_in2
       ,.probe_out0 (b2bcontrol)
       ,.probe_out1 (preamble_length_vio_int)
       ,.probe_out2 (burst_length_vio_int)

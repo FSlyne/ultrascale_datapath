@@ -46,7 +46,7 @@
 ////  PART OF THIS FILE AT ALL TIMES.
 ////------------------------------------------------------------------------------
 
-`timescale 1ps/1ps
+`timescale 1fs/1fs
 (* DowngradeIPIdentifiedWarnings="yes" *)
 ////module lbus_if
 module xxv_ethernet_0_pkt_gen_mon
@@ -57,6 +57,48 @@ module xxv_ethernet_0_pkt_gen_mon
   input                      sys_reset,
   input                      send_continuous_pkts, 
   input wire                 restart_tx_rx,
+  input  wire [16:0]    gt_dmonitorout,
+  input  wire [0:0]    gt_eyescandataerror,
+  output wire [0:0]    gt_eyescanreset,
+  output wire [0:0]    gt_eyescantrigger,
+  output wire [15:0]    gt_pcsrsvdin,
+  output wire [0:0]    gt_rxbufreset,
+  input  wire [2:0]    gt_rxbufstatus,
+  output wire [0:0]    gt_rxcdrhold,
+  output wire [0:0]    gt_rxcommadeten,
+  output wire [0:0]    gt_rxdfeagchold,
+  output wire [0:0]    gt_rxdfelpmreset,
+  output wire [0:0]    gt_rxlatclk,
+  output wire [0:0]    gt_rxlpmen,
+  output wire [0:0]    gt_rxpcsreset,
+  output wire [0:0]    gt_rxpmareset,
+  output wire [0:0]    gt_rxpolarity,
+  output wire [0:0]    gt_rxprbscntreset,
+  input  wire [0:0]    gt_rxprbserr,
+  output wire [3:0]    gt_rxprbssel,
+  output wire [2:0]    gt_rxrate,
+  output wire [0:0]    gt_rxslide_in,
+  input  wire [1:0]    gt_rxstartofseq,
+  input  wire [1:0]    gt_txbufstatus,
+  output wire [4:0]    gt_txdiffctrl,
+  output wire [0:0]    gt_txinhibit,
+  output wire [0:0]    gt_txlatclk,
+  output wire [6:0]    gt_txmaincursor,
+  output wire [0:0]    gt_txpcsreset,
+  output wire [0:0]    gt_txpmareset,
+  output wire [0:0]    gt_txpolarity,
+  output wire [4:0]    gt_txpostcursor,
+  output wire [0:0]    gt_txprbsforceerr,
+  output wire [3:0]    gt_txprbssel,
+  output wire [4:0]    gt_txprecursor,
+  output wire gtwiz_reset_tx_datapath,
+  output wire gtwiz_reset_rx_datapath,
+  input  wire [15:0]    gt_drpdo,
+  input  wire [0:0]    gt_drprdy,
+  output wire [0:0]    gt_drpen,
+  output wire [0:0]    gt_drpwe,
+  output wire [9:0]    gt_drpaddr,
+  output wire [15:0]    gt_drpdi,
 //// RX Signals
   output wire         rx_reset,
   input  wire         user_rx_reset,
@@ -584,6 +626,53 @@ xxv_ethernet_0_axis_traffic_gen_mon #(
 
 
 
+xxv_ethernet_0_trans_debug i_xxv_ethernet_0_trans_debug
+(
+.gt_dmonitorout(gt_dmonitorout),
+.gt_eyescandataerror(gt_eyescandataerror),
+.gt_eyescanreset(gt_eyescanreset),
+.gt_eyescantrigger(gt_eyescantrigger),
+.gt_pcsrsvdin(gt_pcsrsvdin),
+.gt_rxbufreset(gt_rxbufreset),
+.gt_rxbufstatus(gt_rxbufstatus),
+.gt_rxcdrhold(gt_rxcdrhold),
+.gt_rxcommadeten(gt_rxcommadeten),
+.gt_rxdfeagchold(gt_rxdfeagchold),
+.gt_rxdfelpmreset(gt_rxdfelpmreset),
+.gt_rxlatclk(gt_rxlatclk),
+.gt_rxlpmen(gt_rxlpmen),
+.gt_rxpcsreset(gt_rxpcsreset),
+.gt_rxpmareset(gt_rxpmareset),
+.gt_rxpolarity(gt_rxpolarity),
+.gt_rxprbscntreset(gt_rxprbscntreset),
+.gt_rxprbserr(gt_rxprbserr),
+.gt_rxprbssel(gt_rxprbssel),
+.gt_rxrate(gt_rxrate),
+.gt_rxslide_in(gt_rxslide_in),
+.gt_rxstartofseq(gt_rxstartofseq),
+.gt_txbufstatus(gt_txbufstatus),
+.gt_txdiffctrl(gt_txdiffctrl),
+.gt_txinhibit(gt_txinhibit),
+.gt_txlatclk(gt_txlatclk),
+.gt_txmaincursor(gt_txmaincursor),
+.gt_txpcsreset(gt_txpcsreset),
+.gt_txpmareset(gt_txpmareset),
+.gt_txpolarity(gt_txpolarity),
+.gt_txpostcursor(gt_txpostcursor),
+.gt_txprbsforceerr(gt_txprbsforceerr),
+.gt_txprbssel(gt_txprbssel),
+.gt_txprecursor(gt_txprecursor),
+.gtwiz_reset_tx_datapath (gtwiz_reset_tx_datapath),
+.gtwiz_reset_rx_datapath (gtwiz_reset_rx_datapath),
+.gt_drpdo(gt_drpdo),
+.gt_drprdy(gt_drprdy),
+.gt_drpen(gt_drpen),
+.gt_drpwe(gt_drpwe),
+.gt_drpaddr(gt_drpaddr),
+.gt_drpdi(gt_drpdi),
+.reset(sys_reset),
+.drp_clk(dclk)
+);
 
 
 endmodule

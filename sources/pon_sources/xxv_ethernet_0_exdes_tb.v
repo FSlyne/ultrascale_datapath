@@ -159,10 +159,10 @@ xxv_ethernet_0_exdes EXDES
       time_out_cntr_en = 1;
       wait(rx_block_lock_led_0 || timed_out);
       if(rx_block_lock_led_0) 
-      $display("INFO : CORE 25GE RX BLOCK LOCKED");
+      $display("INFO : CORE 10GE RX BLOCK LOCKED");
       else 
       begin
-          $display("ERROR: CORE 25GE RX BLOCK LOCK FAILED - Timed Out");
+          $display("ERROR: CORE 10GE RX BLOCK LOCK FAILED - Timed Out");
           $finish; 
       end
       time_out_cntr_en = 0;
@@ -215,13 +215,13 @@ xxv_ethernet_0_exdes EXDES
     initial
     begin
         gt_refclk_p =1;
-        forever #3103030.303   gt_refclk_p = ~ gt_refclk_p;
+        forever #3200000.000   gt_refclk_p = ~ gt_refclk_p;
     end
 
     initial
     begin
         gt_refclk_n =0;
-        forever #3103030.303   gt_refclk_n = ~ gt_refclk_n;
+        forever #3200000.000   gt_refclk_n = ~ gt_refclk_n;
     end
 
     initial
