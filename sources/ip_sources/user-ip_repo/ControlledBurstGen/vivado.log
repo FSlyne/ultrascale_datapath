@@ -1,0 +1,16 @@
+#-----------------------------------------------------------
+# Vivado v2017.3 (64-bit)
+# SW Build 2018833 on Wed Oct  4 19:58:22 MDT 2017
+# IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
+# Start of session at: Tue Mar 24 00:19:50 2020
+# Process ID: 5396
+# Current directory: E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/hls_sources/ControlledBurstGen/ControlledBurstGen/solution1/impl/ip
+# Command line: vivado.exe -notrace -mode batch -source run_ippack.tcl
+# Log file: E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/hls_sources/ControlledBurstGen/ControlledBurstGen/solution1/impl/ip/vivado.log
+# Journal file: E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/hls_sources/ControlledBurstGen/ControlledBurstGen/solution1/impl/ip\vivado.jou
+#-----------------------------------------------------------
+source run_ippack.tcl -notrace
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2017.3/data/ip'.
+INFO: [Common 17-206] Exiting Vivado at Tue Mar 24 00:20:00 2020...

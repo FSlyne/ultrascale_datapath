@@ -102,12 +102,13 @@ assign mtrlb_activity_flash = frame_activity_count[13];
 //        default : m_axis_slvlb_d_tvalid = !fifoe || fdo[36];
 //    endcase
 // end
-// //get the positive edge of the start and align it to one clock cycle
-// //-----------------Positive Edge Detector--------------------//
-//reg m_axis_slvlb_d_tlast_reg_next;
-//always@(posedge axis_tx_clk)
-//    m_axis_slvlb_d_tlast_reg_next<=m_axis_slvlb_d_tlast_reg; 
-//assign m_axis_slvlb_d_tlast = m_axis_slvlb_d_tlast_reg&&(~m_axis_slvlb_d_tlast_reg_next);
+//    //get the positive edge of the start and align it to one clock cycle
+//    //-----------------Positive Edge Detector--------------------//
+//    reg m_axis_slvlb_d_tlast_reg_next;
+//    wire m_axis_slvlb_d_tlast_reg;
+//    always@(posedge axis_tx_clk)
+//        m_axis_slvlb_d_tlast_reg_next<=m_axis_slvlb_d_tlast_reg; 
+//    assign m_axis_slvlb_d_tlast = m_axis_slvlb_d_tlast_reg&&(~m_axis_slvlb_d_tlast_reg_next);
 //     //----------------------------------------------------------//
    
 //always @ (*) begin

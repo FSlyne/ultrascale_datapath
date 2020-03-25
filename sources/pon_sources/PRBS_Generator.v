@@ -93,6 +93,7 @@ module PRBS_Generator(
   wire prbs_any_gen_en_int = 1'b1;
 
   ControlledBurstGen_0 ControlledBurstGen_inst(
+    .axis_dataOut_TVALID_ap_vld(axis_dataOut_TVALID_ap_vld),  // output wire axis_dataOut_TVALID_ap_vld
     .ap_clk (tx_axis_usrclk),
     .ap_rst_n (~example_stimulus_reset_sync),
     //optional control ports -- fixing it for now
@@ -102,11 +103,12 @@ module PRBS_Generator(
     .ap_ready(),                // output wire ap_ready
     .enable (example_stimulus_reset_sync^1'b1),  // input wire [0 : 0] enable
     .preamble_length(preamble_length),
+    .add_delimiter(1'b0),                            // input wire [0 : 0] add_delimiter
     .preamble(32'h05560556),
     .delimiter(32'hB2C50FA1),
     .burst_period(burst_period),
     .burst_length(burst_length),
-    .dataOut_TVALID(axis_dataOut_TVALID),    // output wire dataOut_TVALID
+    .dataOut_TVALID(),    // output wire dataOut_TVALID
     .dataOut_TREADY(axis_dataOut_TREADY),    // input wire dataOut_TREADY
     .dataOut_TDATA(hb0_gtwiz_userdata_tx_axis_TDATA_int),      // output wire [31 : 0] dataOut_TDATA
     .dataOut_TDEST(),      // output wire [5 : 0] dataOut_TDEST
@@ -114,7 +116,8 @@ module PRBS_Generator(
     .dataOut_TSTRB(),      // output wire [3 : 0] dataOut_TSTRB
     .dataOut_TUSER(axis_dataOut_TUSER),      // output wire [1 : 0] dataOut_TUSER
     .dataOut_TLAST(axis_dataOut_TLAST),      // output wire [0 : 0] dataOut_TLAST
-    .dataOut_TID()          // output wire [4 : 0] dataOut_TID
+    .dataOut_TID(),          // output wire [4 : 0] dataOut_TID
+    .axis_dataOut_TVALID(axis_dataOut_TVALID)                // output wire [0 : 0] axis_dataOut_TVALID
   );
 
 

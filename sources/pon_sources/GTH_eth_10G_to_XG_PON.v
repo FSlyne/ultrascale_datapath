@@ -72,7 +72,7 @@ module GTH_eth_10G_to_XG_PON_if(
 
 //    output wire ResetL,
 //    output wire LPMode
-    );
+);
     
      /*assign ResetL = 1'b1;
      assign LPMode = 1'b0;*/
@@ -111,7 +111,7 @@ module GTH_eth_10G_to_XG_PON_if(
     assign axis_usrtx_aresetn = ~hb_gtwiz_reset_all; //TEMPORARY need to be changed
     wire eth_sys_reset;
     wire eth_sys_reset_vio;
-    assign eth_sys_reset = eth_sys_reset_phy||eth_sys_reset_vio;     
+    assign eth_sys_reset = eth_sys_reset_phy; // eth_sys_reset_phy||eth_sys_reset_vio;   
     wire dclk;
     assign dclk_buf_out = dclk;
     IBUFGDS 
@@ -195,23 +195,12 @@ module GTH_eth_10G_to_XG_PON_if(
     wire lb_eth_axis_usrtx_TUSER;
     wire [3:0] lb_eth_axis_usrtx_TKEEP;
     
-    /*assign eth_axis_usrtx_TDATA = b2bcontrol ? lb_eth_axis_usrtx_TDATA : axis_usrtx_TDATA;
-    assign eth_axis_usrtx_TVALID = b2bcontrol ? lb_eth_axis_usrtx_TVALID : axis_usrtx_TVALID;
-    assign eth_axis_usrtx_TLAST = b2bcontrol ? lb_eth_axis_usrtx_TLAST : axis_usrtx_TLAST;
-    assign eth_axis_usrtx_TUSER = b2bcontrol ? lb_eth_axis_usrtx_TUSER : axis_usrtx_TUSER;
-    assign eth_axis_usrtx_TKEEP = b2bcontrol ? lb_eth_axis_usrtx_TKEEP : axis_usrtx_TKEEP;*/
-    
-    assign eth_axis_usrtx_TDATA = lb_eth_axis_usrtx_TDATA;
-    assign eth_axis_usrtx_TVALID = lb_eth_axis_usrtx_TVALID;
-    assign eth_axis_usrtx_TLAST = lb_eth_axis_usrtx_TLAST;
-    assign eth_axis_usrtx_TUSER = lb_eth_axis_usrtx_TUSER;
-    assign eth_axis_usrtx_TKEEP = lb_eth_axis_usrtx_TKEEP;
     reg [2:0] gt_loopback_config = 3'b000; //no loopback
     
- (* DONT_TOUCH = "TRUE" *) 
- xxv_ethernet_0_exdes xxv_ethernet_0_top_inst(
+    (* DONT_TOUCH = "TRUE" *) 
+    xxv_ethernet_0_exdes xxv_ethernet_0_top_inst(
 		.gt_rxp_in(eth_gt_rxp_in)
-		,.gt_rxn_in(eth_gt_rxn_in)
+        ,.gt_rxn_in(eth_gt_rxn_in)
 		,.gt_txp_out(eth_gt_txp_out)
 		,.gt_txn_out(eth_gt_txn_out)
 		,.restart_tx_rx_0(eth_restart_tx_rx)
@@ -265,30 +254,94 @@ module GTH_eth_10G_to_XG_PON_if(
         ,.gtwiz_reset_qpll0reset_out(gtwiz_reset_qpll0reset_out)
         ,.gtwiz_reset_qpll1reset_out(gtwiz_reset_qpll1reset_out)
         ,.gtwiz_reset_all_0(gtwiz_reset_all_0)
-);
+    );
 
-(* DONT_TOUCH = "TRUE" *)
-axis_ms_slv_loopback axis_ms_slv_loopback_inst(
-    .axis_tx_clk                (eth_tx_axis_usrclk),
-    .axis_rx_clk                (eth_rx_axis_usrclk),
-    .axis_resetn                (~eth_sys_reset), //eth_sys_reset is a active high reset
+    wire [31:0] xg_PON_axis_usrtx_TDATA;
+    wire [3:0] xg_PON_axis_usrtx_TKEEP;
+    wire xg_PON_axis_usrtx_TLAST;
+    wire xg_PON_axis_usrtx_TUSER;
+    wire xg_PON_axis_usrtx_TVALID;
 
-    .slvlb_en_l2_addr_swap      (1'b0), // inputs to control the swap of first 12 bytes 
-                                         // in the received ethernet frame.
-    .mtrlb_activity_flash       (), 
+    add_XG_PON_header add_XG_PON_header_inst(
+        .axis_clk(eth_tx_axis_usrclk)
+        ,.axis_reset(eth_sys_reset)
+        
+        ,.axis_TDATA_in(eth_axis_usrrx_TDATA)
+        ,.axis_TVALID_in(eth_axis_usrrx_TVALID)
+        ,.axis_TKEEP_in(eth_axis_usrrx_TKEEP)
+        ,.axis_TLAST_in(eth_axis_usrrx_TLAST)
+        ,.axis_TUSER_in(eth_axis_usrrx_TUSER)
+        ,.axis_TREADY_out()
+        
+        ,.axis_TDATA_out(xg_PON_axis_usrtx_TDATA)
+        ,.axis_TVALID_out(xg_PON_axis_usrtx_TVALID)
+        ,.axis_TKEEP_out(xg_PON_axis_usrtx_TKEEP)
+        ,.axis_TLAST_out(xg_PON_axis_usrtx_TLAST)
+        ,.axis_TUSER_out(xg_PON_axis_usrtx_TUSER)
+        ,.axis_TREADY_in(1'b1)  
+    );
 
-    .s_axis_slvlb_d_tdata       (eth_axis_usrrx_TDATA), 
-    .s_axis_slvlb_d_tkeep       (eth_axis_usrrx_TKEEP), 
-    .s_axis_slvlb_d_tvalid      (eth_axis_usrrx_TVALID), 
-    .s_axis_slvlb_d_tlast       (eth_axis_usrrx_TLAST),
-    .s_axis_slvlb_d_tuser       (eth_axis_usrrx_TUSER), 
-    .s_axis_slvlb_d_tready      (eth_axis_usrrx_TREADY),
-     
-    .m_axis_slvlb_d_tdata       (lb_eth_axis_usrtx_TDATA), 
-    .m_axis_slvlb_d_tkeep       (lb_eth_axis_usrtx_TKEEP), 
-    .m_axis_slvlb_d_tvalid      (lb_eth_axis_usrtx_TVALID), 
-    .m_axis_slvlb_d_tlast       (lb_eth_axis_usrtx_TLAST),
-    .m_axis_slvlb_d_tuser       (lb_eth_axis_usrtx_TUSER),
-    .m_axis_slvlb_d_tready      (eth_axis_usrtx_TREADY)
-);
+
+    wire [31:0] xg_PON_to_eth_axis_usrtx_TDATA;
+    wire [3:0] xg_PON_to_eth_axis_usrtx_TKEEP;
+    wire xg_PON_to_eth_axis_usrtx_TLAST;
+    wire xg_PON_to_eth_axis_usrtx_TUSER;
+    wire xg_PON_to_eth_axis_usrtx_TVALID;
+    wire xg_PON_to_eth_axis_usrtx_TREADY;
+    xg_PON_frame_sync xg_PON_frame_sync_inst(
+        .clk_in             (eth_tx_axis_usrclk)
+        ,.reset_in          (eth_sys_reset)
+    
+        ,.axis_TDATA_in     (xg_PON_axis_usrtx_TDATA)
+        ,.axis_TVALID_in    (xg_PON_axis_usrtx_TVALID)
+        ,.axis_TKEEP_in     (xg_PON_axis_usrtx_TKEEP)
+        ,.axis_TLAST_in     (xg_PON_axis_usrtx_TLAST)
+        ,.axis_TUSER_in     (xg_PON_axis_usrtx_TUSER)
+        ,.axis_TREADY_out   ()
+    
+        ,.axis_TDATA_out    (xg_PON_to_eth_axis_usrtx_TDATA)
+        ,.axis_TVALID_out   (xg_PON_to_eth_axis_usrtx_TVALID)
+        ,.axis_TKEEP_out    (xg_PON_to_eth_axis_usrtx_TKEEP)
+        ,.axis_TLAST_out    (xg_PON_to_eth_axis_usrtx_TLAST)
+        ,.axis_TUSER_out    (xg_PON_to_eth_axis_usrtx_TUSER)
+        ,.axis_TREADY_in    (xg_PON_to_eth_axis_usrtx_TREADY)  
+    );
+
+
+    (* DONT_TOUCH = "TRUE" *)
+    axis_ms_slv_loopback axis_ms_slv_loopback_inst(
+        .axis_tx_clk                (eth_tx_axis_usrclk)
+        ,.axis_rx_clk                (eth_rx_axis_usrclk)
+        ,.axis_resetn                (~eth_sys_reset) //eth_sys_reset is a active high reset
+    
+        ,.slvlb_en_l2_addr_swap      (1'b0) // inputs to control the swap of first 12 bytes 
+                                             // in the received ethernet frame.
+        ,.mtrlb_activity_flash       ()
+    
+        ,.s_axis_slvlb_d_tdata       (xg_PON_to_eth_axis_usrtx_TDATA) 
+        ,.s_axis_slvlb_d_tkeep       (xg_PON_to_eth_axis_usrtx_TKEEP) 
+        ,.s_axis_slvlb_d_tvalid      (xg_PON_to_eth_axis_usrtx_TVALID) 
+        ,.s_axis_slvlb_d_tlast       (xg_PON_to_eth_axis_usrtx_TLAST)
+        ,.s_axis_slvlb_d_tuser       (xg_PON_to_eth_axis_usrtx_TUSER) 
+        ,.s_axis_slvlb_d_tready      (xg_PON_to_eth_axis_usrtx_TREADY)
+         
+        ,.m_axis_slvlb_d_tdata       (lb_eth_axis_usrtx_TDATA) 
+        ,.m_axis_slvlb_d_tkeep       (lb_eth_axis_usrtx_TKEEP) 
+        ,.m_axis_slvlb_d_tvalid      (lb_eth_axis_usrtx_TVALID) 
+        ,.m_axis_slvlb_d_tlast       (lb_eth_axis_usrtx_TLAST)
+        ,.m_axis_slvlb_d_tuser       (lb_eth_axis_usrtx_TUSER)
+        ,.m_axis_slvlb_d_tready      (eth_axis_usrtx_TREADY)
+    );
+    
+    /*assign eth_axis_usrtx_TDATA = b2bcontrol ? lb_eth_axis_usrtx_TDATA : axis_usrtx_TDATA;
+    assign eth_axis_usrtx_TVALID = b2bcontrol ? lb_eth_axis_usrtx_TVALID : axis_usrtx_TVALID;
+    assign eth_axis_usrtx_TLAST = b2bcontrol ? lb_eth_axis_usrtx_TLAST : axis_usrtx_TLAST;
+    assign eth_axis_usrtx_TUSER = b2bcontrol ? lb_eth_axis_usrtx_TUSER : axis_usrtx_TUSER;
+    assign eth_axis_usrtx_TKEEP = b2bcontrol ? lb_eth_axis_usrtx_TKEEP : axis_usrtx_TKEEP;*/
+    assign eth_axis_usrtx_TDATA = lb_eth_axis_usrtx_TDATA;
+    assign eth_axis_usrtx_TVALID = lb_eth_axis_usrtx_TVALID;
+    assign eth_axis_usrtx_TLAST = lb_eth_axis_usrtx_TLAST;
+    assign eth_axis_usrtx_TUSER = lb_eth_axis_usrtx_TUSER;
+    assign eth_axis_usrtx_TKEEP = lb_eth_axis_usrtx_TKEEP;
+
 endmodule

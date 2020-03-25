@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xd:acceleratorMap xmlns:xd="http://www.xilinx.com/xidane" xd:functionName="ControlledBurstGen" xd:componentRef="ControlledBurstGen" xd:initiationInterval="1" xd:clockPeriod="10.000000" xd:sequential="true" xd:hostMachine="64" xd:reset="control">
+  <xd:controlReg xd:name="control" xd:interfaceRef="ap_ctrl" xd:busTypeRef="acc_handshake" xd:type="acc_handshake"/>
+  <xd:arg xd:name="enable" xd:originalName="enable" xd:direction="in" xd:interfaceRef="enable" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="preamble_length" xd:originalName="preamble_length" xd:direction="in" xd:interfaceRef="preamble_length" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="add_delimiter" xd:originalName="add_delimiter" xd:direction="in" xd:interfaceRef="add_delimiter" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="preamble" xd:originalName="preamble" xd:direction="in" xd:interfaceRef="preamble" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="delimiter" xd:originalName="delimiter" xd:direction="in" xd:interfaceRef="delimiter" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="burst_length" xd:originalName="burst_length" xd:direction="in" xd:interfaceRef="burst_length" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="burst_period" xd:originalName="burst_period" xd:direction="in" xd:interfaceRef="burst_period" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="dataOut-&gt;data" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="32"/>
+  <xd:arg xd:name="dataOut-&gt;keep" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="4"/>
+  <xd:arg xd:name="dataOut-&gt;strb" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="4"/>
+  <xd:arg xd:name="dataOut-&gt;user" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="2"/>
+  <xd:arg xd:name="dataOut-&gt;last" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="1"/>
+  <xd:arg xd:name="dataOut-&gt;id" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="5"/>
+  <xd:arg xd:name="dataOut-&gt;dest" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="6"/>
+  <xd:arg xd:name="*(axis_dataOut_TVALID)" xd:originalName="axis_dataOut_TVALID" xd:direction="out" xd:interfaceRef="axis_dataOut_TVALID" xd:busTypeRef="register" xd:handshakeRef="ap_vld" xd:dataWidth="1" xd:firstOut="0"/>
+  <xd:latencyEstimates xd:best-case="0" xd:worst-case="0" xd:average-case="0"/>
+  <xd:resourceEstimates xd:LUT="489" xd:FF="67" xd:BRAM="0" xd:DSP="0"/>
+</xd:acceleratorMap>
