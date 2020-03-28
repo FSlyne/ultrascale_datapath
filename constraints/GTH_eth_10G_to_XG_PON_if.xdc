@@ -50,15 +50,6 @@
 # UltraScale FPGAs Transceivers Wizard IP example design-level XDC file
 # ----------------------------------------------------------------------------------------------------------------------
 
-
-set_property package_pin AW27 [get_ports hb_gtwiz_reset_all_in]
-#GPIO Push button->Center on VCU108 board
-set_property IOSTANDARD LVCMOS18 [get_ports hb_gtwiz_reset_all_in]
-
-set_property PACKAGE_PIN E34 [get_ports link_down_latched_reset_in]
-#GPIO Push button->North on VCU108 board
-set_property IOSTANDARD LVCMOS18 [get_ports link_down_latched_reset_in]
-
 #set_property PACKAGE_PIN AM24 [get_ports ResetL]
 #set_property IOSTANDARD LVCMOS18 [get_ports ResetL]
 
@@ -76,12 +67,12 @@ set_property IOSTANDARD LVCMOS18 [get_ports link_down_latched_reset_in]
 ### Transceivers should be adjacent to allow timing constraints to be met easily.
 ### Full details of available transceiver locations can be found
 ### in the appropriate transceiver User Guide, or use the Transceiver Wizard.
-create_clock -period 10.000 [get_ports dclk_p]
+create_clock -period 4.000 [get_ports dclk_p]
 set_property IOSTANDARD DIFF_SSTL12 [get_ports dclk_p]
 
 set_property PACKAGE_PIN F31 [get_ports dclk_n]
 set_property PACKAGE_PIN G31 [get_ports dclk_p]
-create_clock -period 10.000 [get_ports dclk_n]
+create_clock -period 4.000 [get_ports dclk_n]
 set_property IOSTANDARD DIFF_SSTL12 [get_ports dclk_n]
 
 ### These are sample constraints, please use correct constraints for your device
@@ -139,6 +130,54 @@ set_property PACKAGE_PIN BC40 [get_ports send_continous_pkts]
 set_property IOSTANDARD LVCMOS18 [get_ports send_continous_pkts]
 
 
+# Location constraints for other example design top-level ports
+# Note: uncomment the following set_property constraints and replace "<>" with appropriate pin locations for your board
+# ----------------------------------------------------------------------------------------------------------------------
+#set_property PACKAGE_PIN G22 [get_ports xgpon_gt_clk_freerun_p_in]
+#set_property IOSTANDARD DIFF_SSTL12 [get_ports xgpon_gt_clk_freerun_p_in]
+
+set_property package_pin AW27 [get_ports hb_gtwiz_reset_all_in] 
+#GPIO Push button->Center on VCU108 board
+set_property IOSTANDARD LVCMOS18 [get_ports hb_gtwiz_reset_all_in]
+
+set_property PACKAGE_PIN E34 [get_ports link_down_latched_reset_in] 
+#GPIO Push button->North on VCU108 board
+set_property IOSTANDARD LVCMOS18 [get_ports link_down_latched_reset_in]
+
+#set_property PACKAGE_PIN BA37 [get_ports link_status_out] 
+##GPIO LED7 on VCU108 board
+#set_property IOSTANDARD LVCMOS18 [get_ports link_status_out]
+
+#set_property PACKAGE_PIN AV34 [get_ports link_down_latched_out]
+#set_property IOSTANDARD LVCMOS12 [get_ports link_down_latched_out]
+
+# Clock constraints for clocks provided as inputs to the core
+# Note: the IP core-level XDC constrains clocks produced by the core, which drive user clocks via helper blocks
+# ----------------------------------------------------------------------------------------------------------------------
+#create_clock -period 4.000 -name clk_freerun [get_ports xgpon_gt_clk_freerun_p_in]
+
+set_property ADAPT_CFG1 16'h1000 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+set_property DMONITOR_CFG1 8'h01 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+set_property RXCDR_CFG0 16'h2000 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+set_property RXCDR_CFG2 16'h0556 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+
+
+create_clock -period 3.103 -name DMON_CLK -waveform {0.000 1.552} [get_pins -hierarchical -filter {NAME =~ */dmonClk_BUFG_0/O}]
+create_clock -period 4.000 -name DRP_CLK -waveform {0.000 2.000} [get_pins -hierarchical -filter {NAME =~ */drpClk_BUFG/O}]
+
+# False path constraints
+# ----------------------------------------------------------------------------------------------------------------------
+set_false_path -to [get_cells -hierarchical -filter {NAME =~ *bit_sync*inst/i_in_meta_reg}]
+##set_false_path -to [get_cells -hierarchical -filter {NAME =~ *reset_synchronizer*inst/rst_in_*_reg}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *reset_sync*inst/rst_in_meta_reg/D}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *reset_sync*inst/rst_in_meta_reg/PRE}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *reset_sync*inst/rst_in_sync1_reg/PRE}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *reset_sync*inst/rst_in_sync2_reg/PRE}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *reset_sync*inst/rst_in_sync3_reg/PRE}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *reset_sync*inst/rst_in_out_reg/PRE}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *_BCDR_inst_0/u_reset_sync/stretch_r_reg*/PRE}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *_BCDR_inst_0/u_sob_stretch_dmon_inst/stretch_r_reg*/PRE}]
+set_false_path -to [get_pins -hierarchical -filter {NAME =~ *_BCDR_inst_0/u_sob_stretch_dmon_inst/sync2_r_reg*/D}]
 
 
 

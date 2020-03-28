@@ -113,6 +113,8 @@ module add_XG_PON_header(
         end
     end
     //-------------------------------------------------------------//
+    
+    /////////////////////////////////////////////////////////////////
 
     wire [31:0] axis_TDATA_delyd;
     wire axis_TVALID_delyd;
@@ -127,11 +129,28 @@ module add_XG_PON_header(
       .CLK(axis_clk),  // input wire CLK
       .Q({axis_TDATA_delyd, axis_TVALID_delyd, axis_TKEEP_delyd, axis_TLAST_delyd, axis_TUSER_delyd})      // output wire [37 : 0] Q
     );
+
+    wire [31:0] axis_TDATA;
+    wire axis_TVALID;
+    wire [3:0] axis_TKEEP;
+    wire axis_TLAST;
+    wire axis_TUSER;    
+    assign axis_TDATA = en_count ? tdata : axis_TDATA_delyd;
+    assign axis_TVALID = en_count ? tvalid : axis_TVALID_delyd;
+    assign axis_TLAST = en_count ? tlast : axis_TLAST_delyd;
+    assign axis_TKEEP = en_count ? tkeep : axis_TKEEP_delyd;
+    assign axis_TUSER = en_count ? tuser : axis_TUSER_delyd;
+
+    ////////////////////////////add fcs xgpon////////////////////////
+    reg axis_TLAST_in_1clk_dely;
+    always@(posedge axis_clk) begin
+        axis_TLAST_in_1clk_dely<=axis_TLAST;
+    end
+    assign axis_TDATA_out = axis_TLAST_in_1clk_dely ? 32'haaaaaaaa : axis_TDATA;
+    assign axis_TVALID_out = axis_TLAST_in_1clk_dely ? 1'b1 : axis_TVALID;
+    assign axis_TLAST_out = axis_TLAST_in_1clk_dely;
+    assign axis_TKEEP_out = axis_TLAST_in_1clk_dely ? 4'hf : axis_TKEEP;
+    assign axis_TUSER_out = axis_TLAST_in_1clk_dely ? 1'b0 : axis_TUSER;
     
-    
-    assign axis_TDATA_out = en_count ? tdata : axis_TDATA_delyd;
-    assign axis_TVALID_out = en_count ? tvalid : axis_TVALID_delyd;
-    assign axis_TLAST_out = en_count ? tlast : axis_TLAST_delyd;
-    assign axis_TKEEP_out = en_count ? tkeep : axis_TKEEP_delyd;
-    assign axis_TUSER_out = en_count ? tuser : axis_TUSER_delyd;
+
 endmodule

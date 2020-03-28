@@ -27,17 +27,27 @@
 #
 # 3. The following remote source files that were added to the original project:-
 #
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/vio/vio.xci"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/BCDR/GTH/BCDR_QuickLock.dcp"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/standard_rw_fifo/standard_rw_fifo.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/xxv_ethernet_0_gt_0/xxv_ethernet_0_gt_0.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/xxv_ethernet_0/xxv_ethernet_0.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/eth_10G_gtbnk230_q2_gt_0/eth_10G_gtbnk230_q2_gt_0.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/eth_10G_gtbnk230_q2/eth_10G_gtbnk230_q2.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/vio_top/vio_top.xci"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/AXIS_RxGateway.v"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/AXIS_TxGateway.v"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/Axis_fifo_rw_control.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/Burst_Mode_Synchronizer.v"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/FMC_GTH_core_wrapper.v"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/FMC_GTH_top.v"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/GTH_core_init_seq.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/GTH_eth_10G_emulator.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/GTH_eth_10G_to_XG_PON.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/PRBS_Generator.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/add_XG_PON_header.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/axis_ms_slv_loopback.v"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/bit_sync.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/eth_10G_gtbnk230_q2_clocking_wrapper.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/eth_10G_gtbnk230_q2_common_wrapper.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/eth_10G_gtbnk230_q2_core_support.v"
@@ -51,6 +61,7 @@
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/eth_10G_gtbnk230_q2_ultrascale_tx_userclk.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/reset_sync.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/vio_top_wrapper.v"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/vio_wrapper.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/xg_PON_frame_sync.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/xxv_ethernet_0_core_support.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/pon_sources/xxv_ethernet_0_exdes.v"
@@ -63,8 +74,11 @@
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/variableDelay/variableDelay.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/axis_master_slave_lb_fifo/axis_master_slave_lb_fifo.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/ControlledBurstGen_0/ControlledBurstGen_0.xci"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/gth_ultrascale_core/gth_ultrascale_core.xci"
+#    "e:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/ip_sources/axis_ila/axis_ila.xci"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/constraints/GTH_eth_10G_to_XG_PON_if.xdc"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/constraints/ila_Debug.xdc"
+#    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/sim_sources/BCDR_QuickLock.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/sim_sources/FMC_GTH_10G_top_tb.v"
 #    "E:/WorkingDir/eth_10g_axi_lb_FMC_GTH/sources/sim_sources/top_tb_behav.wcfg"
 #
@@ -172,19 +186,32 @@ update_ip_catalog -rebuild
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
+ "[file normalize "$origin_dir/../sources/ip_sources/vio/vio.xci"]"\
+ "[file normalize "$origin_dir/../sources/ip_sources/BCDR/GTH/BCDR_QuickLock.dcp"]"\
+ "[file normalize "$origin_dir/../sources/ip_sources/standard_rw_fifo/standard_rw_fifo.xci"]"\
  "[file normalize "$origin_dir/../sources/ip_sources/xxv_ethernet_0_gt_0/xxv_ethernet_0_gt_0.xci"]"\
  "[file normalize "$origin_dir/../sources/ip_sources/xxv_ethernet_0/xxv_ethernet_0.xci"]"\
  "[file normalize "$origin_dir/../sources/ip_sources/eth_10G_gtbnk230_q2_gt_0/eth_10G_gtbnk230_q2_gt_0.xci"]"\
  "[file normalize "$origin_dir/../sources/ip_sources/eth_10G_gtbnk230_q2/eth_10G_gtbnk230_q2.xci"]"\
  "[file normalize "$origin_dir/../sources/ip_sources/vio_top/vio_top.xci"]"\
- "[file normalize "$origin_dir/../sources/ip_sources/axis_master_slave_lb_fifo/axis_master_slave_lb_fifo.xci"]"\
  "[file normalize "$origin_dir/../sources/ip_sources/variableDelay/variableDelay.xci"]"\
+ "[file normalize "$origin_dir/../sources/ip_sources/axis_master_slave_lb_fifo/axis_master_slave_lb_fifo.xci"]"\
+ "[file normalize "$origin_dir/../sources/ip_sources/ControlledBurstGen_0/ControlledBurstGen_0.xci"]"\
+ "[file normalize "$origin_dir/../sources/ip_sources/gth_ultrascale_core/gth_ultrascale_core.xci"]"\
+ "[file normalize "$origin_dir/../sources/ip_sources/axis_ila/axis_ila.xci"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/AXIS_RxGateway.v"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/AXIS_TxGateway.v"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/Axis_fifo_rw_control.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/Burst_Mode_Synchronizer.v"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/FMC_GTH_core_wrapper.v"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/FMC_GTH_top.v"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/GTH_core_init_seq.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/GTH_eth_10G_emulator.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/GTH_eth_10G_to_XG_PON.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/PRBS_Generator.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/add_XG_PON_header.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/axis_ms_slv_loopback.v"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/bit_sync.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/eth_10G_gtbnk230_q2_clocking_wrapper.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/eth_10G_gtbnk230_q2_common_wrapper.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/eth_10G_gtbnk230_q2_core_support.v"]"\
@@ -198,6 +225,7 @@ set files [list \
  "[file normalize "$origin_dir/../sources/pon_sources/eth_10G_gtbnk230_q2_ultrascale_tx_userclk.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/reset_sync.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/vio_top_wrapper.v"]"\
+ "[file normalize "$origin_dir/../sources/pon_sources/vio_wrapper.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/xg_PON_frame_sync.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/xxv_ethernet_0_core_support.v"]"\
  "[file normalize "$origin_dir/../sources/pon_sources/xxv_ethernet_0_exdes.v"]"\
@@ -229,29 +257,6 @@ if { ![get_property "is_locked" $file_obj] } {
 # Set 'sources_1' fileset file properties for local files
 # None
 
-
-# Set 'sources_1' fileset file properties for remote files
-# None
-
-# Set 'sources_1' fileset file properties for local files
-# None
-
-# Set IP repository paths
-set obj [get_filesets sources_1]
-set_property "ip_repo_paths" "[file normalize "$origin_dir/../sources/ip_sources/user-ip_repo"]" $obj
-
-# Rebuild user ip_repo's index before adding any source files
-update_ip_catalog -rebuild
-
-# Set 'sources_1' fileset object
-set obj [get_filesets sources_1]
-set files [list \
- "[file normalize "$origin_dir/../sources/ip_sources/ControlledBurstGen_0/ControlledBurstGen_0.xci"]"\
-]
-add_files -norecurse -fileset $obj $files
-
-# Set 'sources_1' fileset file properties for remote files
-# None
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
 set_property -name "top" -value "top" -objects $obj
@@ -282,10 +287,10 @@ set file "$origin_dir/../constraints/ila_Debug.xdc"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
 set_property -name "file_type" -value "XDC" -objects $file_obj
+set_property -name "is_enabled" -value "0" -objects $file_obj
 
 # Set 'constrs_1' fileset properties
 set obj [get_filesets constrs_1]
-set_property -name "target_constrs_file" -value "[file normalize "$origin_dir/../constraints/ila_Debug.xdc"]" -objects $obj
 
 # Create 'sim_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sim_1] ""]} {
@@ -295,6 +300,7 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
+ "[file normalize "$origin_dir/../sources/sim_sources/BCDR_QuickLock.v"]"\
  "[file normalize "$origin_dir/../sources/sim_sources/FMC_GTH_10G_top_tb.v"]"\
  "[file normalize "$origin_dir/../sources/sim_sources/top_tb_behav.wcfg"]"\
 ]

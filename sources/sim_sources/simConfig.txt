@@ -1,0 +1,4 @@
+restart
+add_force {/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/vio_top_wrapper_inst/preamble_length_vio_int} -radix hex {0 0ns}                                                                                                             
+add_force {/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/vio_top_wrapper_inst/burst_period_vio_int} -radix hex {0x000001ff 0ns}
+run 12 us

@@ -243,5 +243,32 @@ module GTH_eth_10G_emulator(
         ,.gtwiz_reset_qpll1reset_out(gtwiz_reset_qpll1reset_out)
         ,.gtwiz_reset_all_0(gtwiz_reset_all_0)
 	);
-
+	
+    if(1) begin : eth10g_emu_debug
+    //----------- ILA debus instantiation ---//  
+    axis_ila eth_tx_axis_ila(
+        .clk(eth_tx_axis_usrclk), // input wire clk    
+        .probe0(eth_axis_usrtx_TREADY), // input wire [0:0] TREADY  
+        .probe1(eth_axis_usrtx_TDATA), // input wire [31:0]  TDATA 
+        .probe2(4'd0), // input wire [3:0]  TSTRB 
+        .probe3(eth_axis_usrtx_TVALID), // input wire [0:0]  TVALID 
+        .probe4(eth_axis_usrtx_TLAST), // input wire [0:0]  TLAST 
+        .probe5(eth_axis_usrtx_TUSER), // input wire [0:0]  TUSER 
+        .probe6(eth_axis_usrtx_TKEEP), // input wire [3:0]  TKEEP 
+        .probe7(1'b0), // input wire [0:0]  TDEST  
+        .probe8(1'b0) // input wire [0:0]  TID
+    );
+    axis_ila eth_rx_axis_ila(
+        .clk(eth_rx_axis_usrclk), // input wire clk    
+        .probe0(1'b1), // input wire [0:0] TREADY  
+        .probe1(eth_axis_usrrx_TDATA), // input wire [31:0]  TDATA 
+        .probe2(4'd0), // input wire [3:0]  TSTRB 
+        .probe3(eth_axis_usrrx_TVALID), // input wire [0:0]  TVALID 
+        .probe4(eth_axis_usrrx_TLAST), // input wire [0:0]  TLAST 
+        .probe5(eth_axis_usrrx_TUSER), // input wire [0:0]  TUSER 
+        .probe6(eth_axis_usrrx_TKEEP), // input wire [3:0]  TKEEP 
+        .probe7(1'b0), // input wire [0:0]  TDEST  
+        .probe8(1'b0) // input wire [0:0]  TID
+    );
+    end
 endmodule

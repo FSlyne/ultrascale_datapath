@@ -42,6 +42,7 @@ module xg_PON_frame_sync(
     
     wire [31:0] rxdata_preamble_synced_out;
     wire [31:0] rxdata_delimiter_synced_out;
+    wire [31:0] rxdata_tlast_synced_out;
     wire preamble_detected;
     wire delimiter_detected;
     wire [63:0] out_data_double_buffer;
@@ -74,19 +75,44 @@ module xg_PON_frame_sync(
         ,.out_data_double_buffer   ()
         ,.out_threshold_comparator ()
     );
+    
+    wire tlast_detected;
+    (* DONT_TOUCH = "TRUE" *)
+    Burst_Mode_Synchronizer fcs_checker_inst (
+        .in_data                   (rxdata_delimiter_synced_out)
+        ,.in_syncword              (32'haaaaaaaa)
+        ,.in_threshold             (7'b0000011)
+        ,.in_enable                (axis_TVALID_in)
+        ,.in_reset                 (reset_in)
+        ,.in_clock                 (clk_in)
+        ,.out_data                 (rxdata_tlast_synced_out)
+        ,.out_detected             (tlast_detected)
+        ,.out_data_double_buffer   ()
+        ,.out_threshold_comparator ()
+    );
+
+    //get the positive edge of the start and align it to one clock cycle
+    //-----------------Positive Edge Detector--------------------//
+    reg tlast_detected_next;
+    wire tlast_detected_posedge;
+    always@(posedge clk_in)
+        tlast_detected_next <= tlast_detected; 
+    assign tlast_detected_posedge = tlast_detected && (~tlast_detected_next);
+    //----------------------------------------------------------//
 
     //----------------------------------------
     // Calibrated-delay Data FIFO buffer
     //----------------------------------------
-    reg [4+2-1:0] delay_buffer[20:0];
-    reg [4+2-1:0] axis_sidechnls_delay_compensated;
+    reg [32+4+2-1:0] delay_buffer[20:0];
+    reg [32+4+2-1:0] axis_sidechnls_delay_compensated;
     always @(posedge clk_in) begin
-        delay_buffer[0] <= {axis_TKEEP_in, axis_TLAST_in, axis_TUSER_in};
-        axis_sidechnls_delay_compensated <= delay_buffer[18];
+        delay_buffer[0] <= {rxdata_delimiter_synced_out, axis_TKEEP_in, axis_TLAST_in, axis_TUSER_in};
+        axis_sidechnls_delay_compensated <= delay_buffer[8];
     end
     assign axis_TKEEP_out = axis_sidechnls_delay_compensated[5:2];
-    assign axis_TLAST_out = axis_sidechnls_delay_compensated[1];
+    assign axis_TLAST_out = tlast_detected_posedge;
     assign axis_TUSER_out = axis_sidechnls_delay_compensated[0];
+    assign axis_TDATA_out = axis_sidechnls_delay_compensated[37:6];
 
 
     genvar idx_delay;
@@ -97,8 +123,26 @@ module xg_PON_frame_sync(
             end
         end
     endgenerate
-    assign axis_TDATA_out = rxdata_delimiter_synced_out;
-    
+
+    //----------------------------------------
+    // Calibrated-delay Data FIFO buffer
+    //----------------------------------------
+    reg [0:0] delay_buffer_1[10:0];
+    reg [0:0] delimiter_detected_delay_compensated;
+    always @(posedge clk_in) begin
+        delay_buffer_1[0] <= delimiter_detected;
+        delimiter_detected_delay_compensated <= delay_buffer_1[8];
+    end
+
+    genvar idx_delay_1;
+    generate
+        for (idx_delay_1 = 1; idx_delay_1 < 20; idx_delay_1 = idx_delay_1 + 1) begin : fifo_buffer_1
+            always @(posedge clk_in) begin
+                delay_buffer_1[idx_delay_1] <= delay_buffer_1[idx_delay_1 - 1];
+            end
+        end
+    endgenerate
+      
     //---------Signal Declarations-------------------------//
     reg en_out_next, stop;
     reg [31:0] count_reg, count_reg_next;
@@ -116,7 +160,7 @@ module xg_PON_frame_sync(
         if (reset_in || stop) begin
             en_count<=0;
             count_reg<=32'd0;
-        end else if (delimiter_detected) begin
+        end else if (delimiter_detected_delay_compensated) begin
             en_count<=1'b1;
             count_reg<=32'd1;
         end else begin
@@ -138,7 +182,7 @@ module xg_PON_frame_sync(
             en_out_next <= en_count;
         end
         
-        if (count_reg == enable_till || axis_TLAST_out)
+        if (count_reg == enable_till || tlast_detected_posedge)
             stop <= 1;
         else
             stop <= 0; 

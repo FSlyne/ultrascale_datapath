@@ -95,6 +95,7 @@ module top_tb
 
 
     reg             dclk;
+    reg             xgpon_gt_clk_freerun;
     reg             gt_refclk_p;
     reg             gt_refclk_n;
     reg             sys_reset;
@@ -206,23 +207,23 @@ module top_tb
     initial
     begin
         gt_refclk_p =1;
-        forever #3200000.000   gt_refclk_p = ~ gt_refclk_p;
+        forever #3200000.000   gt_refclk_p = ~ gt_refclk_p; //156.25 MHz
     end
 
     initial
     begin
         gt_refclk_n =0;
-        forever #3200000.000   gt_refclk_n = ~ gt_refclk_n;
+        forever #3200000.000   gt_refclk_n = ~ gt_refclk_n; //156.25 MHz
     end
 
     initial
     begin
         dclk =1;
-        forever #5000000.000   dclk = ~ dclk;
+        forever #2000000.000   dclk = ~ dclk; // 100 MHz
     end
-
-
-
+    
+wire xg_pon_burst_gt_txp_out;
+wire xg_pon_burst_gt_txn_out;
 top top_DUT_inst
 (
   .hb_gtwiz_reset_all_in        (1'b0)
@@ -238,6 +239,11 @@ top top_DUT_inst
   ,.eth_mgthtxp0_230_out        (eth_mgthtxp0_230_out)
   ,.eth_mgthtxn0_230_out        (eth_mgthtxn0_230_out)
   
+  ,.xg_pon_burst_gt_txp_out     (xg_pon_burst_gt_txp_out)
+  ,.xg_pon_burst_gt_txn_out     (xg_pon_burst_gt_txn_out)
+  ,.xg_pon_burst_gt_rxp_in      (xg_pon_burst_gt_txp_out)
+  ,.xg_pon_burst_gt_rxn_in      (xg_pon_burst_gt_txn_out)
+
   ,.eth_restart_tx_rx           (restart_tx_rx_0)
   ,.send_continous_pkts         (send_continous_pkts_0)
   ,.eth_rx_gt_locked_led        (rx_gt_locked_led_0)

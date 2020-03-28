@@ -39,6 +39,12 @@ module top(
     output wire eth_mgthtxn0_230_out,
     input wire  eth_restart_tx_rx,
 
+	output wire xg_pon_burst_gt_txp_out,
+    output wire xg_pon_burst_gt_txn_out,
+	input wire xg_pon_burst_gt_rxp_in,
+    input wire xg_pon_burst_gt_rxn_in,
+
+
     input wire send_continous_pkts,   // This port can be used to send continous packets 
 	
     output wire eth_rx_gt_locked_led,     // Indicates GT LOCK
@@ -102,7 +108,7 @@ assign gtwiz_reset_qpll1lock_in = qpll1lock;
 wire qpll0reset_out;
 wire qpll1reset_out;
 wire powergood_out;
-assign powergood_out = gtpowergood_out_0 & gtpowergood_out_1;
+assign powergood_out = gtpowergood_out_0 & gtpowergood_out_1; //FIXME add powergood for fmcxgpon gt
 assign qpll0reset_out = powergood_out ? 1'b0 : 1'b1 ;
 assign qpll1reset_out = powergood_out ? 1'b0 : 1'b1 ;
 
@@ -126,7 +132,7 @@ wire dclk_buf_int;
 eth_10G_gtbnk230_q2_sharedlogic_wrapper i_eth_10G_gtbnk230_q2_sharedlogic_wrapper(
     .gt_refclk_p (eth_gt_refclk_p),
     .gt_refclk_n (eth_gt_refclk_n),
-    .gt_refclk_out (gt_refclk_out),
+    .refclk (gt_refclk_out),
     .qpll0reset (qpll0reset_out),
     .qpll0lock (qpll0lock),
     .qpll0outclk (qpll0outclk),
@@ -212,6 +218,7 @@ eth_10G_gtbnk230_q2_sharedlogic_wrapper i_eth_10G_gtbnk230_q2_sharedlogic_wrappe
 
 	);
 	
+
 	(* DONT_TOUCH = "TRUE" *)
 	GTH_eth_10G_to_XG_PON_if GTH_eth_10G_to_XG_PON_if_inst(
         .hb_gtwiz_reset_all_in(hb_gtwiz_reset_all_in)     
@@ -223,6 +230,12 @@ eth_10G_gtbnk230_q2_sharedlogic_wrapper i_eth_10G_gtbnk230_q2_sharedlogic_wrappe
         ,.eth_gt_rxn_in(eth_mgthrxn3_230_in)
         ,.eth_gt_txp_out(eth_mgthtxp3_230_out)
         ,.eth_gt_txn_out(eth_mgthtxn3_230_out)
+        
+        ,.xg_pon_burst_gt_rxp_in(xg_pon_burst_gt_rxp_in)
+        ,.xg_pon_burst_gt_rxn_in(xg_pon_burst_gt_rxn_in)
+        ,.xg_pon_burst_gt_txp_out(xg_pon_burst_gt_txp_out)
+        ,.xg_pon_burst_gt_txn_out(xg_pon_burst_gt_txn_out)
+                
         ,.eth_restart_tx_rx(eth_restart_tx_rx)
         ,.send_continous_pkts(send_continous_pkts)   // This port can be used to send continous packets 
         
@@ -260,7 +273,9 @@ eth_10G_gtbnk230_q2_sharedlogic_wrapper i_eth_10G_gtbnk230_q2_sharedlogic_wrappe
         ,.gtwiz_reset_qpll0reset_out(gtwiz_reset_qpll0reset_out)
         ,.gtwiz_reset_qpll1reset_out(gtwiz_reset_qpll1reset_out)
         ,.gtwiz_reset_all_0(gtwiz_reset_all_0)
+        ,.gt_refclk_in(gt_refclk_out)
 
     );
-	
+    
+
 endmodule

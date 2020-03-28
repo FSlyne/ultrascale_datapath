@@ -32,6 +32,12 @@ module GTH_eth_10G_to_XG_PON_if(
     input  wire eth_gt_rxn_in,
     output wire eth_gt_txp_out,
     output wire eth_gt_txn_out,
+    
+    input  wire xg_pon_burst_gt_rxp_in,
+    input  wire xg_pon_burst_gt_rxn_in,
+    output wire xg_pon_burst_gt_txp_out,
+    output wire xg_pon_burst_gt_txn_out,
+    
     input wire  eth_restart_tx_rx,
     input wire send_continous_pkts,   // This port can be used to send continous packets 
     output wire eth_rx_gt_locked_led,     // Indicates GT LOCK
@@ -68,8 +74,8 @@ module GTH_eth_10G_to_XG_PON_if(
     input wire qpll1outrefclk,
     output wire gtwiz_reset_qpll0reset_out,
     output wire gtwiz_reset_qpll1reset_out,
-    input wire gtwiz_reset_all_0
-
+    input wire gtwiz_reset_all_0,
+    input wire gt_refclk_in
 //    output wire ResetL,
 //    output wire LPMode
 );
@@ -263,7 +269,7 @@ module GTH_eth_10G_to_XG_PON_if(
     wire xg_PON_axis_usrtx_TVALID;
 
     add_XG_PON_header add_XG_PON_header_inst(
-        .axis_clk(eth_tx_axis_usrclk)
+        .axis_clk(eth_rx_axis_usrclk)
         ,.axis_reset(eth_sys_reset)
         
         ,.axis_TDATA_in(eth_axis_usrrx_TDATA)
@@ -281,6 +287,77 @@ module GTH_eth_10G_to_XG_PON_if(
         ,.axis_TREADY_in(1'b1)  
     );
 
+    ////////////////////////////////////////////////////////////////////
+    ///****************************************************************/
+    ////////////////////////////////////////////////////////////////////
+    wire axis_aclk_gt_tx_usrclk;
+    wire axis_aclk_gt_rx_usrclk;
+    wire [31:0] xg_PON_axis_usrrx_TDATA;
+    wire xg_PON_axis_usrrx_TVALID;
+    wire xg_PON_axis_usrrx_TREADY;
+
+    wire [31:0] cdc_xg_PON_axis_usrtx_TDATA;
+    wire cdc_xg_PON_axis_usrtx_TVALID;
+    wire cdc_xg_PON_axis_usrtx_TREADY;
+    wire cdc_xg_PON_axis_usrtx_TLAST;
+    
+    (* DONT_TOUCH = "TRUE" *)
+    axis_ms_slv_loopback axis_fifo_inst(
+        .axis_tx_clk                 (axis_aclk_gt_tx_usrclk)
+        ,.axis_rx_clk                (eth_rx_axis_usrclk)
+        ,.axis_resetn                (~eth_sys_reset) //eth_sys_reset is a active high reset
+    
+        ,.slvlb_en_l2_addr_swap      (1'b0) // inputs to control the swap of first 12 bytes 
+                                             // in the received ethernet frame.
+        ,.mtrlb_activity_flash       ()
+    
+        ,.s_axis_slvlb_d_tdata       (xg_PON_axis_usrtx_TDATA) 
+        ,.s_axis_slvlb_d_tkeep       (xg_PON_axis_usrtx_TKEEP) 
+        ,.s_axis_slvlb_d_tvalid      (xg_PON_axis_usrtx_TVALID) 
+        ,.s_axis_slvlb_d_tlast       (xg_PON_axis_usrtx_TLAST)
+        ,.s_axis_slvlb_d_tuser       (xg_PON_axis_usrtx_TUSER) 
+        ,.s_axis_slvlb_d_tready      (xg_PON_axis_usrtx_TREADY)
+         
+        ,.m_axis_slvlb_d_tdata       (cdc_xg_PON_axis_usrtx_TDATA) 
+        ,.m_axis_slvlb_d_tkeep       (cdc_xg_PON_axis_usrtx_TKEEP) 
+        ,.m_axis_slvlb_d_tvalid      (cdc_xg_PON_axis_usrtx_TVALID) 
+        ,.m_axis_slvlb_d_tlast       (cdc_xg_PON_axis_usrtx_TLAST)
+        ,.m_axis_slvlb_d_tuser       (cdc_xg_PON_axis_usrtx_TUSER)
+        ,.m_axis_slvlb_d_tready      (1'b1)
+    );
+    
+    FMC_GTH_top FMC_GTH_top_inst(
+        .qpll0clk_in                             (qpll0outclk),
+        .qpll0refclk_in                          (qpll0outrefclk),
+        .qpll1clk_in                             (qpll1outclk),
+        .qpll1refclk_in                          (qpll1outrefclk),
+        .gtwiz_reset_qpll0lock_in                (qpll0lock),
+        .gtwiz_reset_qpll0reset_out              (),
+        .ch0_gthrxn_in(xg_pon_burst_gt_rxn_in),
+        .ch0_gthrxp_in(xg_pon_burst_gt_rxp_in),
+        .ch0_gthtxn_out(xg_pon_burst_gt_txn_out),
+        .ch0_gthtxp_out(xg_pon_burst_gt_txp_out),
+        .hb_gtwiz_reset_clk_freerun_buf_int(dclk),
+        .hb_gtwiz_reset_all_in(hb_gtwiz_reset_all_in),
+        .hb_gtwiz_reset_all_out(hb_gtwiz_reset_all),
+        .gth_core_tx_usrclk2_out(axis_aclk_gt_tx_usrclk),
+        .gth_core_rx_usrclk2_out(axis_aclk_gt_rx_usrclk),
+        .link_down_latched_reset_in(link_down_latched_reset_in),
+        .link_status_out(link_status_out),
+        .link_down_latched_out(link_down_latched_out),
+        .axis_usrtx_TDATA(cdc_xg_PON_axis_usrtx_TDATA),
+        .axis_usrtx_TREADY(),
+        .axis_usrtx_TLAST(cdc_xg_PON_axis_usrtx_TLAST),
+        .axis_usrtx_TVALID(cdc_xg_PON_axis_usrtx_TVALID),
+        .axis_usrtx_aresetn(axis_usrtx_aresetn),
+        .axis_usrrx_TDATA(xg_PON_axis_usrrx_TDATA),
+        .axis_usrrx_TREADY(1'b1),
+        .axis_usrrx_TVALID(xg_PON_axis_usrrx_TVALID),
+        .axis_aclk_gt_tx_usrclk(axis_aclk_gt_tx_usrclk),
+        .axis_aclk_gt_rx_usrclk(axis_aclk_gt_rx_usrclk)
+    );
+
+
 
     wire [31:0] xg_PON_to_eth_axis_usrtx_TDATA;
     wire [3:0] xg_PON_to_eth_axis_usrtx_TKEEP;
@@ -289,15 +366,15 @@ module GTH_eth_10G_to_XG_PON_if(
     wire xg_PON_to_eth_axis_usrtx_TVALID;
     wire xg_PON_to_eth_axis_usrtx_TREADY;
     xg_PON_frame_sync xg_PON_frame_sync_inst(
-        .clk_in             (eth_tx_axis_usrclk)
+        .clk_in             (axis_aclk_gt_rx_usrclk)
         ,.reset_in          (eth_sys_reset)
     
-        ,.axis_TDATA_in     (xg_PON_axis_usrtx_TDATA)
-        ,.axis_TVALID_in    (xg_PON_axis_usrtx_TVALID)
-        ,.axis_TKEEP_in     (xg_PON_axis_usrtx_TKEEP)
-        ,.axis_TLAST_in     (xg_PON_axis_usrtx_TLAST)
-        ,.axis_TUSER_in     (xg_PON_axis_usrtx_TUSER)
-        ,.axis_TREADY_out   ()
+        ,.axis_TDATA_in     (xg_PON_axis_usrrx_TDATA)
+        ,.axis_TVALID_in    (xg_PON_axis_usrrx_TVALID)
+        ,.axis_TKEEP_in     (4'd15)
+        ,.axis_TLAST_in     (1'b0)
+        ,.axis_TUSER_in     (1'b0)
+        ,.axis_TREADY_out   (xg_PON_axis_usrrx_TREADY)
     
         ,.axis_TDATA_out    (xg_PON_to_eth_axis_usrtx_TDATA)
         ,.axis_TVALID_out   (xg_PON_to_eth_axis_usrtx_TVALID)
@@ -311,7 +388,7 @@ module GTH_eth_10G_to_XG_PON_if(
     (* DONT_TOUCH = "TRUE" *)
     axis_ms_slv_loopback axis_ms_slv_loopback_inst(
         .axis_tx_clk                (eth_tx_axis_usrclk)
-        ,.axis_rx_clk                (eth_rx_axis_usrclk)
+        ,.axis_rx_clk                (axis_aclk_gt_rx_usrclk)
         ,.axis_resetn                (~eth_sys_reset) //eth_sys_reset is a active high reset
     
         ,.slvlb_en_l2_addr_swap      (1'b0) // inputs to control the swap of first 12 bytes 
@@ -343,5 +420,34 @@ module GTH_eth_10G_to_XG_PON_if(
     assign eth_axis_usrtx_TLAST = lb_eth_axis_usrtx_TLAST;
     assign eth_axis_usrtx_TUSER = lb_eth_axis_usrtx_TUSER;
     assign eth_axis_usrtx_TKEEP = lb_eth_axis_usrtx_TKEEP;
+    
+    if(1) begin : eth10g_to_xgpon_if_debug
+    //----------- ILA debus instantiation ---//  
+    axis_ila eth10gif_tx_axis_ila(
+        .clk(eth_tx_axis_usrclk), // input wire clk    
+        .probe0(eth_axis_usrtx_TREADY), // input wire [0:0] TREADY  
+        .probe1(eth_axis_usrtx_TDATA), // input wire [31:0]  TDATA 
+        .probe2(4'd0), // input wire [3:0]  TSTRB 
+        .probe3(eth_axis_usrtx_TVALID), // input wire [0:0]  TVALID 
+        .probe4(eth_axis_usrtx_TLAST), // input wire [0:0]  TLAST 
+        .probe5(eth_axis_usrtx_TUSER), // input wire [0:0]  TUSER 
+        .probe6(eth_axis_usrtx_TKEEP), // input wire [3:0]  TKEEP 
+        .probe7(1'b0), // input wire [0:0]  TDEST  
+        .probe8(1'b0) // input wire [0:0]  TID
+    );
+    axis_ila eth10gif_rx_axis_ila(
+        .clk(eth_rx_axis_usrclk), // input wire clk    
+        .probe0(1'b1), // input wire [0:0] TREADY  
+        .probe1(eth_axis_usrrx_TDATA), // input wire [31:0]  TDATA 
+        .probe2(4'd0), // input wire [3:0]  TSTRB 
+        .probe3(eth_axis_usrrx_TVALID), // input wire [0:0]  TVALID 
+        .probe4(eth_axis_usrrx_TLAST), // input wire [0:0]  TLAST 
+        .probe5(eth_axis_usrrx_TUSER), // input wire [0:0]  TUSER 
+        .probe6(eth_axis_usrrx_TKEEP), // input wire [3:0]  TKEEP 
+        .probe7(1'b0), // input wire [0:0]  TDEST  
+        .probe8(1'b0) // input wire [0:0]  TID
+    );
+    end
+
 
 endmodule

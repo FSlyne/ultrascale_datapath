@@ -53,7 +53,7 @@
 module eth_10G_gtbnk230_q2_sharedlogic_wrapper (
      input gt_refclk_p,
      input gt_refclk_n,
-     output gt_refclk_out,
+     output refclk,
      input  [0:0] qpll0reset,
      output [0:0] qpll0lock,
      output [0:0] qpll0outclk,
@@ -98,8 +98,8 @@ module eth_10G_gtbnk230_q2_sharedlogic_wrapper (
 
 );
 
-wire refclk;
-
+//wire refclk;
+wire gt_refclk_out;
 eth_10G_gtbnk230_q2_clocking_wrapper i_eth_10G_gtbnk230_q2_clocking_wrapper(
     .gt_refclk_p (gt_refclk_p),
     .gt_refclk_n (gt_refclk_n),
