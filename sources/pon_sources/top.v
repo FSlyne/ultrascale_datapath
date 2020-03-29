@@ -55,7 +55,9 @@ module top(
     input             eth_gt_refclk_p,
     input             eth_gt_refclk_n,
     input  wire       dclk_p,
-    input  wire       dclk_n
+    input  wire       dclk_n,
+    input  wire       xgpon_gt_clk_freerun_p,
+    input  wire       xgpon_gt_clk_freerun_n
 );
     
 wire tx_clk_out_0;
@@ -247,6 +249,9 @@ eth_10G_gtbnk230_q2_sharedlogic_wrapper i_eth_10G_gtbnk230_q2_sharedlogic_wrappe
         ,.dclk_p(dclk_p)
         ,.dclk_n(dclk_n)
         ,.dclk_buf_out(dclk_buf_int)
+        
+        ,.xgpon_gt_clk_freerun_p(xgpon_gt_clk_freerun_p)
+        ,.xgpon_gt_clk_freerun_n(xgpon_gt_clk_freerun_n)
         
         /// bringing Shared logic ports to top level
         ,.rx_clk_out_0(rx_clk_out_1)

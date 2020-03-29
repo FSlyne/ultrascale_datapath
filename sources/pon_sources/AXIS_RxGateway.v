@@ -1,3 +1,25 @@
+``timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: CONNECT
+// Author: SANDIP DAS
+// 
+// Create Date: 21.03.2020 23:15:47
+// Design Name: 
+// Module Name: AXIS_RX_Gateway
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: AXI stream Receive gateway module.
+//
+//				
+// Dependencies: 
+//				 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments: TODO: this module should be replaced with axis-fifo
+//							  for better performance.
+//////////////////////////////////////////////////////////////////////////////////
 
 `timescale 1 ns / 1 ps
 

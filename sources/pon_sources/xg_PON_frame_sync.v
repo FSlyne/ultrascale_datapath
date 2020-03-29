@@ -147,7 +147,7 @@ module xg_PON_frame_sync(
     reg en_out_next, stop;
     reg [31:0] count_reg, count_reg_next;
     
-    reg [31:0] enable_till = 32'h0000010f;
+    reg [31:0] enable_till = 32'h00000800;
     reg en_count; 
     reg [31:0] tdata = 32'h00000000;
     reg tvalid = 1'b0;

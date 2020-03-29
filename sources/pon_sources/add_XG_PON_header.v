@@ -10,13 +10,19 @@
 // Target Devices: 
 // Tool Versions: 
 // Description: This module accepts ethernet axis stream (32 bit)
-//              adds preamble and delemeter for burst Tx/Rx
+//              adds preamble and delemeter at the begining of the burst 
+//				and a frame tail sequence at the end of the burst for burst Tx/Rx
+//				over GTH-10G interface with raw transmission (no encoding)
 // Dependencies: 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Additional Comments: configuration of the preamble and delimiter is fixed.
+//						Preamble: length = 12byte, pattern = 0x05560556
+//						Delimiter: length = 4byte, pattern = 0xB2C50FA1
+// 			TODO: length and pattern of preamble and delimiter needs to
+//				  reconfigurable through input or through parameter. This should 
+//				  done in the future version.
 //////////////////////////////////////////////////////////////////////////////////
 
 

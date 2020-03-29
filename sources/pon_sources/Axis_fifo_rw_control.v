@@ -1,3 +1,30 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: CONNECT
+// Author: SANDIP DAS
+// 
+// Create Date: 21.03.2020 23:15:47
+// Design Name: 
+// Module Name: axis_fifo_rw_control
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: This module helps to gurrantee continous transfer of data over 10G
+//				GTH interface in case of interfacing to the GT core with asynchronous clocks.
+//				For example, if the tx userclk of gt-ultrascale core is faster than the
+//				clk rate of the incoming data source, it generates control signal to buffer
+//              sufficient data in the input fifo, then asserts fifo_read_enable to read
+//				from the fifo as continous stream of data for the entire frame (till TLAST) 
+//				
+// Dependencies: This module should be interfaced with a axi-stream-fifo with programmable full
+//				 threshold selected as the appropriate value (which should be determined by user).
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments: 
+//////////////////////////////////////////////////////////////////////////////////
+
+
 module axis_fifo_rw_control # (
 
   parameter FREQUENCY = 512

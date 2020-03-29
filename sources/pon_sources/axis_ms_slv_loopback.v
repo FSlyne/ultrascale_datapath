@@ -1,22 +1,23 @@
-`timescale 1ns / 1ps
+``timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: CONNECT
+// Author: SANDIP DAS
 // 
-// Create Date: 30.01.2020 08:43:38
+// Create Date: 21.03.2020 23:15:47
 // Design Name: 
 // Module Name: axis_ms_slv_loopback
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
-// Description: 
-// 
+// Description: This module is just a wrapper over the axi-stream-fifo.
+//				: redundant module. need to be removed later
+//				
 // Dependencies: 
+//				 
 // 
 // Revision:
 // Revision 0.01 - File Created
-// Additional Comments:
-// 
+// Additional Comments: TODO: the module name needs to be changed in the next revision
 //////////////////////////////////////////////////////////////////////////////////
 
 

@@ -221,6 +221,12 @@ module top_tb
         dclk =1;
         forever #2000000.000   dclk = ~ dclk; // 100 MHz
     end
+
+    initial
+    begin
+        xgpon_gt_clk_freerun =1;
+        forever #2000000.000   xgpon_gt_clk_freerun = ~ xgpon_gt_clk_freerun; // 100 MHz
+    end
     
 wire xg_pon_burst_gt_txp_out;
 wire xg_pon_burst_gt_txn_out;
@@ -229,15 +235,17 @@ top top_DUT_inst
   .hb_gtwiz_reset_all_in        (1'b0)
   ,.link_down_latched_reset_in  (1'b0)
   
-  ,.eth_mgthrxp3_230_in         (eth_mgthtxp0_230_out)
-  ,.eth_mgthrxn3_230_in         (eth_mgthtxn0_230_out)
-  ,.eth_mgthtxp3_230_out        (eth_mgthtxp3_230_out)
-  ,.eth_mgthtxn3_230_out        (eth_mgthtxn3_230_out)
-  
+  //eth 10G emulator ports
   ,.eth_mgthrxp0_230_in         (eth_mgthtxp3_230_out)
   ,.eth_mgthrxn0_230_in         (eth_mgthtxn3_230_out)
   ,.eth_mgthtxp0_230_out        (eth_mgthtxp0_230_out)
   ,.eth_mgthtxn0_230_out        (eth_mgthtxn0_230_out)
+  
+  //eth10g to xg-pon if ports
+  ,.eth_mgthrxp3_230_in         (eth_mgthtxp0_230_out)
+  ,.eth_mgthrxn3_230_in         (eth_mgthtxn0_230_out)
+  ,.eth_mgthtxp3_230_out        (eth_mgthtxp3_230_out)
+  ,.eth_mgthtxn3_230_out        (eth_mgthtxn3_230_out)
   
   ,.xg_pon_burst_gt_txp_out     (xg_pon_burst_gt_txp_out)
   ,.xg_pon_burst_gt_txn_out     (xg_pon_burst_gt_txn_out)
@@ -255,6 +263,8 @@ top top_DUT_inst
   ,.eth_gt_refclk_n             (gt_refclk_n)
   ,.dclk_p                      (dclk)
   ,.dclk_n                      (~dclk)
+  ,.xgpon_gt_clk_freerun_p      (xgpon_gt_clk_freerun)
+  ,.xgpon_gt_clk_freerun_n      (~xgpon_gt_clk_freerun)
 );
 
 endmodule

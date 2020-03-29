@@ -43,6 +43,9 @@ module GTH_eth_10G_to_XG_PON_if(
     output wire eth_rx_gt_locked_led,     // Indicates GT LOCK
     output wire eth_rx_block_lock_led,    // Indicates Core Block Lock
     output wire [4:0] eth_completion_status,
+    
+    input xgpon_gt_clk_freerun_p,
+    input xgpon_gt_clk_freerun_n,
 
     input             eth_sys_reset_phy,
     input  wire       dclk_p,
@@ -128,6 +131,15 @@ module GTH_eth_10G_to_XG_PON_if(
          .IB(dclk_n),
          .O(dclk)
        ); 
+    
+    wire xgpon_gt_clk_freerun_buf_int;
+    IBUFGDS 
+      #(.DIFF_TERM("FALSE"))
+    bufg_clk_freerun_inst(
+          .I(xgpon_gt_clk_freerun_p),
+          .IB(xgpon_gt_clk_freerun_n),
+          .O(xgpon_gt_clk_freerun_buf_int)
+    );
 
     // ===================================================================================================================
     // PRBS GENERATOR, CHECKER, AND LINK MANAGEMENT
@@ -337,7 +349,7 @@ module GTH_eth_10G_to_XG_PON_if(
         .ch0_gthrxp_in(xg_pon_burst_gt_rxp_in),
         .ch0_gthtxn_out(xg_pon_burst_gt_txn_out),
         .ch0_gthtxp_out(xg_pon_burst_gt_txp_out),
-        .hb_gtwiz_reset_clk_freerun_buf_int(dclk),
+        .hb_gtwiz_reset_clk_freerun_buf_int(xgpon_gt_clk_freerun_buf_int),
         .hb_gtwiz_reset_all_in(hb_gtwiz_reset_all_in),
         .hb_gtwiz_reset_all_out(hb_gtwiz_reset_all),
         .gth_core_tx_usrclk2_out(axis_aclk_gt_tx_usrclk),

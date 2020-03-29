@@ -67,12 +67,12 @@
 ### Transceivers should be adjacent to allow timing constraints to be met easily.
 ### Full details of available transceiver locations can be found
 ### in the appropriate transceiver User Guide, or use the Transceiver Wizard.
-create_clock -period 4.000 [get_ports dclk_p]
+create_clock -period 10.000 [get_ports dclk_p]
 set_property IOSTANDARD DIFF_SSTL12 [get_ports dclk_p]
 
 set_property PACKAGE_PIN F31 [get_ports dclk_n]
 set_property PACKAGE_PIN G31 [get_ports dclk_p]
-create_clock -period 4.000 [get_ports dclk_n]
+create_clock -period 10.000 [get_ports dclk_n]
 set_property IOSTANDARD DIFF_SSTL12 [get_ports dclk_n]
 
 ### These are sample constraints, please use correct constraints for your device
@@ -133,8 +133,8 @@ set_property IOSTANDARD LVCMOS18 [get_ports send_continous_pkts]
 # Location constraints for other example design top-level ports
 # Note: uncomment the following set_property constraints and replace "<>" with appropriate pin locations for your board
 # ----------------------------------------------------------------------------------------------------------------------
-#set_property PACKAGE_PIN G22 [get_ports xgpon_gt_clk_freerun_p_in]
-#set_property IOSTANDARD DIFF_SSTL12 [get_ports xgpon_gt_clk_freerun_p_in]
+set_property PACKAGE_PIN G22 [get_ports xgpon_gt_clk_freerun_p]
+set_property IOSTANDARD DIFF_SSTL12 [get_ports xgpon_gt_clk_freerun_p]
 
 set_property package_pin AW27 [get_ports hb_gtwiz_reset_all_in] 
 #GPIO Push button->Center on VCU108 board
@@ -154,7 +154,7 @@ set_property IOSTANDARD LVCMOS18 [get_ports link_down_latched_reset_in]
 # Clock constraints for clocks provided as inputs to the core
 # Note: the IP core-level XDC constrains clocks produced by the core, which drive user clocks via helper blocks
 # ----------------------------------------------------------------------------------------------------------------------
-#create_clock -period 4.000 -name clk_freerun [get_ports xgpon_gt_clk_freerun_p_in]
+create_clock -period 4.000 -name clk_freerun [get_ports xgpon_gt_clk_freerun_p]
 
 set_property ADAPT_CFG1 16'h1000 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
 set_property DMONITOR_CFG1 8'h01 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
