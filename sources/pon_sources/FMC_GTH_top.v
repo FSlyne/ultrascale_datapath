@@ -34,13 +34,19 @@
 
 module FMC_GTH_top (
 
-  // Differential reference clock inputs
+  // Differential reference clock inputs used only when
+  // FMC GTH core is used on gt bank 230 for xg-pon if
    input wire qpll0clk_in
   ,input wire qpll0refclk_in
   ,input wire qpll1clk_in
   ,input wire qpll1refclk_in
   ,input wire gtwiz_reset_qpll0lock_in
   ,output wire gtwiz_reset_qpll0reset_out
+
+  // Differential reference clock inputs for gty channel used 
+  // only when qsfp gty core is used on gt bank for xg-pon if
+  ,input  wire mgtrefclk0_x0y3_p
+  ,input  wire mgtrefclk0_x0y3_n
 
   // Serial data ports for transceiver channel 0
   ,input  wire ch0_gthrxn_in
@@ -77,7 +83,7 @@ module FMC_GTH_top (
 
 );
 
-
+   
   // ===================================================================================================================
   // PER-CHANNEL SIGNAL ASSIGNMENTS
   // ===================================================================================================================
@@ -89,20 +95,35 @@ module FMC_GTH_top (
   // are prefixed "ch#", where "#" is the sequential resource number.
 
   //--------------------------------------------------------------------------------------------------------------------
-  wire [0:0] gthrxn_int;
-  assign gthrxn_int[0:0] = ch0_gthrxn_in;
+  wire [0:0] gtyrxn_int;
+  assign gtyrxn_int[0:0] = ch0_gthrxn_in;
 
   //--------------------------------------------------------------------------------------------------------------------
-  wire [0:0] gthrxp_int;
-  assign gthrxp_int[0:0] = ch0_gthrxp_in;
+  wire [0:0] gtyrxp_int;
+  assign gtyrxp_int[0:0] = ch0_gthrxp_in;
 
   //--------------------------------------------------------------------------------------------------------------------
-  wire [0:0] gthtxn_int;
-  assign ch0_gthtxn_out = gthtxn_int[0:0];
+  wire [0:0] gtytxn_int;
+  assign ch0_gthtxn_out = gtytxn_int[0:0];
 
   //--------------------------------------------------------------------------------------------------------------------
-  wire [0:0] gthtxp_int;
-  assign ch0_gthtxp_out = gthtxp_int[0:0];
+  wire [0:0] gtytxp_int;
+  assign ch0_gthtxp_out = gtytxp_int[0:0];
+
+  //--------------------------------------------------------------------------------------------------------------------
+  wire [0:0] gtrefclk00_int;
+  wire [0:0] cm0_gtrefclk00_int;
+  assign gtrefclk00_int[0:0] = cm0_gtrefclk00_int;
+
+  //--------------------------------------------------------------------------------------------------------------------
+  wire [0:0] qpll0outclk_int;
+  wire [0:0] cm0_qpll0outclk_int;
+  assign cm0_qpll0outclk_int = qpll0outclk_int[0:0];
+
+  //--------------------------------------------------------------------------------------------------------------------
+  wire [0:0] qpll0outrefclk_int;
+  wire [0:0] cm0_qpll0outrefclk_int;
+  assign cm0_qpll0outrefclk_int = qpll0outrefclk_int[0:0];
 
   //--------------------------------------------------------------------------------------------------------------------
   wire [0:0] gtwiz_userclk_tx_reset_int;
@@ -258,11 +279,25 @@ module FMC_GTH_top (
   wire [0:0] ch0_rxcdrovrden_int;
   assign rxcdrovrden_int[0:0] = ch0_rxcdrovrden_int;
 
-  //--------------------------------------------------------------------------------------------------------------------
-  wire [0:0] rxlpmen_int;
-  wire [0:0] ch0_rxlpmen_int = 1'b1;
-  assign rxlpmen_int[0:0] = ch0_rxlpmen_int;
-
+//  //--------------------------------------------------------------------------------------------------------------------
+//  wire [0:0] rxlpmen_int;
+//  wire [0:0] ch0_rxlpmen_int = 1'b1;
+//  assign rxlpmen_int[0:0] = ch0_rxlpmen_int;
+//  //--------------------------------------------------------------------------------------------------------------------
+//  wire [0:0] rxlpmgcovrden_int;
+//  wire [0:0] ch0_rxlpmgcovrden_int = 1'b0;
+//  assign rxlpmgcovrden_int[0:0] = ch0_rxlpmgcovrden_int;
+  
+//  //--------------------------------------------------------------------------------------------------------------------
+//  wire [0:0] rxlpmhfovrden_int;
+//  wire [0:0] ch0_rxlpmhfovrden_int = 1'b0;
+//  assign rxlpmhfovrden_int[0:0] = ch0_rxlpmhfovrden_int;
+  
+//  //--------------------------------------------------------------------------------------------------------------------
+//  wire [0:0] rxlpmlfklovrden_int;
+//  wire [0:0] ch0_rxlpmlfklovrden_int = 1'b0;
+//  assign rxlpmlfklovrden_int[0:0] = ch0_rxlpmlfklovrden_int;
+  
   //--------------------------------------------------------------------------------------------------------------------
   wire [16:0] dmonitorout_int;
   wire [16:0] ch0_dmonitorout_int;
@@ -302,6 +337,22 @@ module FMC_GTH_top (
   // ===================================================================================================================
   // BUFFERS
   // ===================================================================================================================
+  // Differential reference clock buffer for MGTREFCLK0_X0Y3
+  wire mgtrefclk0_x0y3_int;
+
+  IBUFDS_GTE3 #(
+    .REFCLK_EN_TX_PATH  (1'b0),
+    .REFCLK_HROW_CK_SEL (2'b00),
+    .REFCLK_ICNTL_RX    (2'b00)
+  ) IBUFDS_GTE3_MGTREFCLK0_X0Y3_INST (
+    .I     (mgtrefclk0_x0y3_p),
+    .IB    (mgtrefclk0_x0y3_n),
+    .CEB   (1'b0),
+    .O     (mgtrefclk0_x0y3_int),
+    .ODIV2 ()
+  );
+
+  assign cm0_gtrefclk00_int = mgtrefclk0_x0y3_int;
 
   // Buffer the hb_gtwiz_reset_all_in input and logically combine it with the internal signal from the example
   // initialization block as well as the VIO-sourced reset
@@ -398,6 +449,7 @@ module FMC_GTH_top (
     );
     
     wire m_axis_tvalid;
+    wire [31:0] m_axis_tdata;
     standard_rw_fifo AXIS_Tx_gateway_fifo (
       .s_aclk(axis_aclk_gt_tx_usrclk),                  // input wire s_aclk
       .s_aresetn(axis_usrtx_aresetn),            // input wire s_aresetn
@@ -409,60 +461,13 @@ module FMC_GTH_top (
       .s_axis_tuser(1'b0),      // input wire [0 : 0] s_axis_tuser
       .m_axis_tvalid(m_axis_tvalid),    // output wire m_axis_tvalid
       .m_axis_tready(fifo_rd_enable),    // input wire m_axis_tready
-      .m_axis_tdata(gtwiz_userdata_tx_int),      // output wire [31 : 0] m_axis_tdata
+      .m_axis_tdata(m_axis_tdata),      // output wire [31 : 0] m_axis_tdata
       .m_axis_tkeep(),      // output wire [3 : 0] m_axis_tkeep
       .m_axis_tlast(m_axis_usrtx_TLAST),      // output wire m_axis_tlast
       .m_axis_tuser(),      // output wire [0 : 0] m_axis_tuser
       .axis_prog_full(fifo_min_data_write_done)  // output wire axis_prog_full
     );
-    
-    AXIS_RX_Gateway # ( 
-        .C_M_AXIS_TDATA_WIDTH(32)
-    ) AXIS_Rx_gateway_inst (
-        .GT_RX_ACTIVE(gtwiz_userclk_rx_active_int), //input
-        .GT_RX_DATA(gtwiz_userdata_rx_int), //output
-        .M_AXIS_ACLK(axis_aclk_gt_rx_usrclk), //clk input
-        .M_AXIS_ARESETN(axis_usrtx_aresetn), //reset (usrclk2 domain)
-        .M_AXIS_TREADY(axis_usrrx_TREADY), //AXIS
-        .M_AXIS_TDATA(axis_usrrx_TDATA),
-        .M_AXIS_TSTRB(),
-        .M_AXIS_TLAST(),
-        .M_AXIS_TVALID(axis_usrrx_TVALID)
-    );
-
-
-  wire drpClk_buffered;
-  wire [0:0] BCDR_in_sop;
-  BUFG drpClk_BUFG 
-    (.I(hb_gtwiz_reset_clk_freerun_buf_int), 
-     .O(drpClk_buffered));
-  BUFG dmonClk_BUFG_0 
-   (.I(ch0_dmonitorout_int[16]), 
-    .O(ch0_dmonitorclk_int));
-  
-  wire [12:0] ch0_BCDR_out_debug;
-  BCDR_QuickLock gth_BCDR_inst_0(
-    .drpDout                        (ch0_drpdo_int)
-    ,.waitTime                      (6'b000110)
-    ,.dmonClk                       (ch0_dmonitorclk_int)
-    ,.threshold                     (7'b0000110)
-    ,.enable                        (1'b1)
-    ,.stepSize                      (7'b0010000)
-    ,.cdrPiCode                     (ch0_dmonitorout_int[6:0])
-    ,.drpClk                        (drpClk_buffered)
-    ,.reset                         (hb_gtwiz_reset_all_int)
-    ,.sop                           (BCDR_in_sop[0])    //ch0_BCDR_in_sop
-    ,.drpRdy                        (ch0_drprdy_int)
-
-    ,.drpDin                        (ch0_drpdi_int)
-    ,.debug                         (ch0_BCDR_out_debug)
-    ,.cdrOvrd                       (ch0_rxcdrovrden_int)
-    ,.drpAddr                       (ch0_drpaddr_int)
-    ,.drpWe                         (ch0_drpwe_int)
-    ,.drpEn                         (ch0_drpen_int)
-  );
-
-
+    assign gtwiz_userdata_tx_int = m_axis_tvalid ? m_axis_tdata : 32'h00000000;
   // ===================================================================================================================
   // VIO FOR HARDWARE BRING-UP AND DEBUG
   // ===================================================================================================================
@@ -488,7 +493,7 @@ module FMC_GTH_top (
     ,.hb0_gtwiz_reset_tx_datapath_int (hb0_gtwiz_reset_tx_datapath_int)
     ,.hb_gtwiz_reset_rx_pll_and_datapath_vio_int (hb_gtwiz_reset_rx_pll_and_datapath_vio_int)
     ,.hb_gtwiz_reset_rx_datapath_vio_int (hb_gtwiz_reset_rx_datapath_vio_int)
-    ,.BCDR_in_sop   (BCDR_in_sop)
+    ,.BCDR_in_sop   (BCDR_in_sop_vio)
   );
 
 
@@ -498,7 +503,7 @@ module FMC_GTH_top (
 
   // Instantiate the example design wrapper, mapping its enabled ports to per-channel internal signals and example
   // resources as appropriate
-  FMC_GTH_core_wrapper FMC_GTH_core_wrapped_inst (
+  /*FMC_GTH_core_wrapper FMC_GTH_core_wrapped_inst (
     .gthrxn_in                               (gthrxn_int)
    ,.gthrxp_in                               (gthrxp_int)
    ,.gthtxn_out                              (gthtxn_int)
@@ -550,7 +555,141 @@ module FMC_GTH_top (
    ,.qpll1refclk_in                          (qpll1refclk_in)
    ,.gtwiz_reset_qpll0lock_in                (gtwiz_reset_qpll0lock_in)
    ,.gtwiz_reset_qpll0reset_out              (gtwiz_reset_qpll0reset_out)
+);*/
+  wire [0:0] rxcdrlock_out;
+  wire [0 : 0] rxphaligndone_out;
+  wire [0 : 0] rxsyncdone_out;
+  wire [0 : 0] txelecidle_in;
+  wire [1 : 0] txpd_in;
+  assign txpd_in[0] = 1'b0; //~m_axis_tvalid;
+  assign txpd_in[1] = 1'b0; //~m_axis_tvalid;
+  assign txelecidle_in = (txpd_in[0] & txpd_in[1]);
+  gty_BCDR_example_wrapper example_wrapper_inst (
+    .gtyrxn_in                               (gtyrxn_int)
+   ,.gtyrxp_in                               (gtyrxp_int)
+   ,.gtytxn_out                              (gtytxn_int)
+   ,.gtytxp_out                              (gtytxp_int)
+   ,.gtwiz_userclk_tx_reset_in               (gtwiz_userclk_tx_reset_int)
+   ,.gtwiz_userclk_tx_srcclk_out             (gtwiz_userclk_tx_srcclk_int)
+   ,.gtwiz_userclk_tx_usrclk_out             (gtwiz_userclk_tx_usrclk_int)
+   ,.gtwiz_userclk_tx_usrclk2_out            (gtwiz_userclk_tx_usrclk2_int)
+   ,.gtwiz_userclk_tx_active_out             (gtwiz_userclk_tx_active_int)
+   ,.gtwiz_userclk_rx_reset_in               (gtwiz_userclk_rx_reset_int)
+   ,.gtwiz_userclk_rx_srcclk_out             (gtwiz_userclk_rx_srcclk_int)
+   ,.gtwiz_userclk_rx_usrclk_out             (gtwiz_userclk_rx_usrclk_int)
+   ,.gtwiz_userclk_rx_usrclk2_out            (gtwiz_userclk_rx_usrclk2_int)
+   ,.gtwiz_userclk_rx_active_out             (gtwiz_userclk_rx_active_int)
+   ,.gtwiz_buffbypass_rx_reset_in            (gtwiz_buffbypass_rx_reset_int)
+   ,.gtwiz_buffbypass_rx_start_user_in       (gtwiz_buffbypass_rx_start_user_int)
+   ,.gtwiz_buffbypass_rx_done_out            (gtwiz_buffbypass_rx_done_int)
+   ,.gtwiz_buffbypass_rx_error_out           (gtwiz_buffbypass_rx_error_int)
+   ,.gtwiz_reset_clk_freerun_in              ({1{hb_gtwiz_reset_clk_freerun_buf_int}})
+   ,.gtwiz_reset_all_in                      ({1{hb_gtwiz_reset_all_int}})
+   ,.gtwiz_reset_tx_pll_and_datapath_in      (gtwiz_reset_tx_pll_and_datapath_int)
+   ,.gtwiz_reset_tx_datapath_in              (gtwiz_reset_tx_datapath_int)
+   ,.gtwiz_reset_rx_pll_and_datapath_in      ({1{hb_gtwiz_reset_rx_pll_and_datapath_int}})
+   ,.gtwiz_reset_rx_datapath_in              ({1{hb_gtwiz_reset_rx_datapath_int}})
+   ,.gtwiz_reset_rx_cdr_stable_out           (gtwiz_reset_rx_cdr_stable_int)
+   ,.gtwiz_reset_tx_done_out                 (gtwiz_reset_tx_done_int)
+   ,.gtwiz_reset_rx_done_out                 (gtwiz_reset_rx_done_int)
+   ,.gtwiz_userdata_tx_in                    (gtwiz_userdata_tx_int)
+   ,.gtwiz_userdata_rx_out                   (gtwiz_userdata_rx_int)
+   ,.gtrefclk00_in                           (gtrefclk00_int)
+   ,.qpll0outclk_out                         (qpll0outclk_int)
+   ,.qpll0outrefclk_out                      (qpll0outrefclk_int)
+   ,.dmonfiforeset_in                        (dmonfiforeset_int)
+   ,.dmonitorclk_in                          (dmonitorclk_int)
+   ,.drpaddr_in                              (drpaddr_int)
+   ,.drpclk_in                               (drpclk_int)
+   ,.drpdi_in                                (drpdi_int)
+   ,.drpen_in                                (drpen_int)
+   ,.drpwe_in                                (drpwe_int)
+   ,.rxcdrovrden_in                          (rxcdrovrden_int)
+   /*,.rxlpmen_in                              (rxlpmen_int)                                                  
+   ,.rxlpmgcovrden_in                        (rxlpmgcovrden_int)                                     
+   ,.rxlpmhfovrden_in                        (rxlpmhfovrden_int)                                      
+   ,.rxlpmlfklovrden_in                      (rxlpmlfklovrden_int)*/                                  
+   ,.dmonitorout_out                         (dmonitorout_int)
+   ,.txelecidle_in                           (txelecidle_in)// input wire [0 : 0] txelecidle_in
+   ,.txpd_in                                 (txpd_in)// input wire [1 : 0] txpd_in
+   ,.drpdo_out                               (drpdo_int)
+   ,.drprdy_out                              (drprdy_int)
+   ,.gtpowergood_out                         (gtpowergood_int)
+   ,.rxcdrlock_out                           (rxcdrlock_out)
+   ,.rxphaligndone_out                       (rxphaligndone_out) // output wire [0 : 0] rxphaligndone_out
+   ,.rxpmaresetdone_out                      (rxpmaresetdone_int)
+   ,.rxsyncdone_out                          (rxsyncdone_out)// output wire [0 : 0] rxsyncdone_out
+   ,.txpmaresetdone_out                      (txpmaresetdone_int)
 );
+
+    AXIS_RX_Gateway # ( 
+        .C_M_AXIS_TDATA_WIDTH(32)
+    ) AXIS_Rx_gateway_inst (
+        .GT_RX_ACTIVE(gtwiz_userclk_rx_active_int), //input
+        .GT_RX_DATA(gtwiz_userdata_rx_int), //output
+        .M_AXIS_ACLK(axis_aclk_gt_rx_usrclk), //clk input
+        .M_AXIS_ARESETN(axis_usrtx_aresetn), //reset (usrclk2 domain)
+        .M_AXIS_TREADY(axis_usrrx_TREADY), //AXIS
+        .M_AXIS_TDATA(axis_usrrx_TDATA),
+        .M_AXIS_TSTRB(),
+        .M_AXIS_TLAST(),
+        .M_AXIS_TVALID(axis_usrrx_TVALID)
+    );
+    
+    wire SOP_detected;
+    (* DONT_TOUCH = "TRUE" *)
+    Burst_Mode_Synchronizer Preamble_Det_SOP_inst (
+        .in_data                   (gtwiz_userdata_rx_int)
+        ,.in_syncword              (32'h05560556)
+        ,.in_threshold             (7'b0000101)
+        ,.in_enable                (gtwiz_userclk_rx_active_int)
+        ,.in_reset                 (1'b0)
+        ,.in_clock                 (axis_aclk_gt_rx_usrclk)
+        ,.out_data                 ()
+        ,.out_detected             (SOP_detected)
+        ,.out_data_double_buffer   ()
+        ,.out_threshold_comparator ()
+    );
+
+    //get the positive edge of the start and align it to one clock cycle
+    //-----------------Positive Edge Detector--------------------//
+    reg SOP_detected_next;
+    wire SOP_detected_posedge;
+    always@(posedge axis_aclk_gt_rx_usrclk)
+        SOP_detected_next <= SOP_detected; 
+    assign SOP_detected_posedge = SOP_detected && (~SOP_detected_next);
+
+
+  wire drpClk_buffered;
+  wire [0:0] BCDR_in_sop;
+  BUFG drpClk_BUFG 
+    (.I(hb_gtwiz_reset_clk_freerun_buf_int), 
+     .O(drpClk_buffered));
+  BUFG dmonClk_BUFG_0 
+   (.I(ch0_dmonitorout_int[16]), 
+    .O(ch0_dmonitorclk_int));
+  
+  wire [12:0] ch0_BCDR_out_debug;
+  BCDR_QuickLock gty_BCDR_inst_0(
+    .drpDout                        (ch0_drpdo_int)
+    ,.waitTime                      (6'b000110)
+    ,.dmonClk                       (ch0_dmonitorclk_int)
+    ,.threshold                     (7'b0000110)
+    ,.enable                        (1'b1)
+    ,.stepSize                      (7'b0010000)
+    ,.cdrPiCode                     (ch0_dmonitorout_int[6:0])
+    ,.drpClk                        (drpClk_buffered)
+    ,.reset                         (hb_gtwiz_reset_all_int)
+    ,.sop                           (SOP_detected_posedge)    //ch0_BCDR_in_sop
+    ,.drpRdy                        (ch0_drprdy_int)
+
+    ,.drpDin                        (ch0_drpdi_int)
+    ,.debug                         (ch0_BCDR_out_debug)
+    ,.cdrOvrd                       (ch0_rxcdrovrden_int)
+    ,.drpAddr                       (ch0_drpaddr_int)
+    ,.drpWe                         (ch0_drpwe_int)
+    ,.drpEn                         (ch0_drpen_int)
+  );
 
 
     if(1) begin : xgpon_gt_txrx_if_debug
@@ -569,15 +708,15 @@ module FMC_GTH_top (
     );
     axis_ila xgpon_gt_rx_axis_ila(
         .clk(axis_aclk_gt_rx_usrclk), // input wire clk    
-        .probe0(1'b1), // input wire [0:0] TREADY  
+        .probe0(SOP_detected), // input wire [0:0] TREADY  
         .probe1(gtwiz_userdata_rx_int), // input wire [31:0]  TDATA 
-        .probe2(4'd0), // input wire [3:0]  TSTRB 
+        .probe2(ch0_dmonitorout_int[3:0]), // input wire [3:0]  TSTRB 
         .probe3(gtwiz_userclk_rx_active_int), // input wire [0:0]  TVALID 
-        .probe4(1'b0), // input wire [0:0]  TLAST 
-        .probe5(1'b0), // input wire [0:0]  TUSER 
-        .probe6(4'd15), // input wire [3:0]  TKEEP 
-        .probe7(1'b0), // input wire [0:0]  TDEST  
-        .probe8(1'b0) // input wire [0:0]  TID
+        .probe4(ch0_dmonitorout_int[4]), // input wire [0:0]  TLAST 
+        .probe5(ch0_dmonitorout_int[5]), // input wire [0:0]  TUSER 
+        .probe6(rxcdrlock_out), // input wire [3:0]  TKEEP 
+        .probe7(rxsyncdone_out), // input wire [0:0]  TDEST  
+        .probe8(rxsyncdone_out) // input wire [0:0]  TID
     );
     end
 

@@ -25,7 +25,7 @@ module vio_top_wrapper(
     ,output wire [31:0] preamble_length_vio_int
     ,output wire [31:0] burst_length_vio_int
     ,output wire [31:0] burst_period_vio_int
-	,output wire [0:0] b2bcontrol
+	,output wire [0:0] error_accumulator_clear
 	,output wire [2:0] gt_loopback_control
 	,output wire [0:0] eth_sys_reset_vio
 	,input wire eth_rx_gt_locked_led     // Indicates GT LOCK
@@ -50,7 +50,7 @@ module vio_top_wrapper(
       ,.probe_in0(eth_rx_gt_locked_led)    // input wire [0 : 0] probe_in0
       ,.probe_in1(eth_rx_block_lock_led)    // input wire [0 : 0] probe_in1
       ,.probe_in2(eth_completion_status)    // input wire [4 : 0] probe_in2
-      ,.probe_out0 (b2bcontrol)
+      ,.probe_out0 (error_accumulator_clear)
       ,.probe_out1 (preamble_length_vio_int)
       ,.probe_out2 (burst_length_vio_int)
       ,.probe_out3 (burst_period_vio_int)

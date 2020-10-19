@@ -84,6 +84,14 @@ set_property PACKAGE_PIN R8 [get_ports eth_gt_refclk_n]
 set_property PACKAGE_PIN R9 [get_ports eth_gt_refclk_p]
 set_property IOSTANDARD DIFF_SSTL12 [get_ports eth_gt_refclk_p]
 
+# Location constraints for differential reference clock buffers
+# Note: the IP core-level XDC constrains the transceiver channel data pin locations
+# ----------------------------------------------------------------------------------------------------------------------
+create_clock -period 6.400 -name clk_mgtrefclk0_x0y3_p [get_ports mgtrefclk0_x0y3_p]
+set_property PACKAGE_PIN AF39 [get_ports mgtrefclk0_x0y3_n]
+set_property PACKAGE_PIN AF38 [get_ports mgtrefclk0_x0y3_p]
+
+
 ###Board constraints to be added here
 ### Below XDC constraints are for VCU108 board with xcvu095-ffva2104-2-e-es2 device
 ### Change these constraints as per your board and device
@@ -162,6 +170,15 @@ set_property RXCDR_CFG0 16'h2000 [get_cells -hierarchical -filter {NAME =~ *gen_
 set_property RXCDR_CFG2 16'h0556 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
 
 
+set_property ADAPT_CFG1 16'h801E [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+set_property DMONITOR_CFG1 8'h01 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+set_property RXCDR_CFG0 16'h0801 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+set_property RXCDR_CFG1 16'h4A00 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+set_property RXCDR_CFG2 16'h01D9 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+set_property RXCDR_CFG4 16'h100A [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+#set_property RXDFE_GC_CFG2 16'h0010 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+
+
 create_clock -period 3.103 -name DMON_CLK -waveform {0.000 1.552} [get_pins -hierarchical -filter {NAME =~ */dmonClk_BUFG_0/O}]
 create_clock -period 4.000 -name DRP_CLK -waveform {0.000 2.000} [get_pins -hierarchical -filter {NAME =~ */drpClk_BUFG/O}]
 
@@ -194,6 +211,72 @@ set_max_delay -from [get_clocks -of_objects [get_pins -hierarchical -filter {NAM
 set_max_delay -from [get_clocks -of_objects [get_pins -hierarchical -filter {NAME =~ */channel_inst/*_CHANNEL_PRIM_INST/TXOUTCLK}]] -to [get_clocks dclk] -datapath_only 2.56
 set_max_delay -from [get_clocks dclk] -to [get_clocks -of_objects [get_pins -hierarchical -filter {NAME =~ */channel_inst/*_CHANNEL_PRIM_INST/TXOUTCLK}]] -datapath_only 10.000
 set_max_delay -from [get_clocks dclk] -to [get_clocks -of_objects [get_pins -hierarchical -filter {NAME =~ */channel_inst/*_CHANNEL_PRIM_INST/RXOUTCLK}]] -datapath_only 10.000
+
+
+set_property PACKAGE_PIN E36 [get_ports microblaze_reset]
+set_property IOSTANDARD LVCMOS18 [get_ports microblaze_reset]
+
+#System Control Related Constraints
+#I2C on SFP channel0, SCLK (MOD_DEF1) and SDATA (MOD_DEF2) on FM-S14
+#is connected to FMC LA_16_P and LA_16_N respectively. This are following
+#pin locations on VCU108 when FM-S14 is connected in FMC HPC0 slot
+set_property PACKAGE_PIN AY8 [get_ports iic_fmc_hpc0_sfp0_scl]
+set_property PACKAGE_PIN AY7 [get_ports iic_fmc_hpc0_sfp0_sda]
+set_property IOSTANDARD LVCMOS18 [get_ports iic_fmc_hpc0_sfp0_scl]
+set_property IOSTANDARD LVCMOS18 [get_ports iic_fmc_hpc0_sfp0_sda]
+
+#Clock generator GBTCLK0, SCLK and SDATA of FM-S14 is connected to
+#FMC LA_00_CC_P and LA_00_CC_N respectively. This are the following
+#pin locations on VCU108 when FM-S14 is connected in FMC HPC0 slot
+set_property PACKAGE_PIN AY9 [get_ports iic_fmc_hpc0_osc0_scl]
+set_property PACKAGE_PIN BA9 [get_ports iic_fmc_hpc0_osc0_sda]
+set_property IOSTANDARD LVCMOS18 [get_ports iic_fmc_hpc0_osc0_scl]
+set_property IOSTANDARD LVCMOS18 [get_ports iic_fmc_hpc0_osc0_sda]
+
+#Clock generator GBTCLK1, SCLK and SDATA of FM-S14 is connected to
+#FMC LA_01_CC_P and LA_01_CC_N respectively. This are the following
+#pin locations on VCU108 when FM-S14 is connected in FMC HPC0 slot
+set_property PACKAGE_PIN BC10 [get_ports iic_fmc_hpc0_osc1_scl]
+set_property PACKAGE_PIN BD10 [get_ports iic_fmc_hpc0_osc1_sda]
+set_property IOSTANDARD LVCMOS18 [get_ports iic_fmc_hpc0_osc1_scl]
+set_property IOSTANDARD LVCMOS18 [get_ports iic_fmc_hpc0_osc1_sda]
+
+#setting internal pull up resistors and and slew properties
+set_property DRIVE 8 [get_ports iic_fmc_hpc0_sfp0_scl]
+set_property DRIVE 8 [get_ports iic_fmc_hpc0_sfp0_sda]
+set_property SLEW SLOW [get_ports iic_fmc_hpc0_sfp0_scl]
+set_property SLEW SLOW [get_ports iic_fmc_hpc0_sfp0_sda]
+
+set_property DRIVE 8 [get_ports iic_fmc_hpc0_osc0_scl]
+set_property DRIVE 8 [get_ports iic_fmc_hpc0_osc0_sda]
+set_property SLEW SLOW [get_ports iic_fmc_hpc0_osc0_scl]
+set_property SLEW SLOW [get_ports iic_fmc_hpc0_osc0_sda]
+
+set_property DRIVE 8 [get_ports iic_fmc_hpc0_osc1_scl]
+set_property DRIVE 8 [get_ports iic_fmc_hpc0_osc1_sda]
+set_property SLEW SLOW [get_ports iic_fmc_hpc0_osc1_scl]
+set_property SLEW SLOW [get_ports iic_fmc_hpc0_osc1_sda]
+
+#set_property OUTPUT_IMPEDANCE RDRV_NONE_NONE [get_ports iic_fmc_hpc0_sfp0_scl_io]
+#set_property OUTPUT_IMPEDANCE RDRV_NONE_NONE [get_ports iic_fmc_hpc0_sfp0_sda_io]
+#set_property OUTPUT_IMPEDANCE RDRV_NONE_NONE [get_ports iic_fmc_hpc0_osc0_scl_io]
+#set_property OUTPUT_IMPEDANCE RDRV_NONE_NONE [get_ports iic_fmc_hpc0_osc0_sda_io]
+#set_property OUTPUT_IMPEDANCE RDRV_NONE_NONE [get_ports iic_fmc_hpc0_osc1_scl_io]
+#set_property OUTPUT_IMPEDANCE RDRV_NONE_NONE [get_ports iic_fmc_hpc0_osc1_sda_io]
+
+set_property PULLUP true [get_ports iic_fmc_hpc0_sfp0_scl]
+set_property PULLUP true [get_ports iic_fmc_hpc0_sfp0_sda]
+set_property PULLUP true [get_ports iic_fmc_hpc0_osc0_scl]
+set_property PULLUP true [get_ports iic_fmc_hpc0_osc0_sda]
+set_property PULLUP true [get_ports iic_fmc_hpc0_osc1_scl]
+set_property PULLUP true [get_ports iic_fmc_hpc0_osc1_sda]
+
+#set_property OFFCHIP_TERM NONE [get_ports iic_fmc_hpc0_sfp0_scl_io]
+#set_property OFFCHIP_TERM NONE [get_ports iic_fmc_hpc0_sfp0_sda_io]
+#set_property OFFCHIP_TERM NONE [get_ports iic_fmc_hpc0_osc0_scl_io]
+#set_property OFFCHIP_TERM NONE [get_ports iic_fmc_hpc0_osc0_sda_io]
+#set_property OFFCHIP_TERM NONE [get_ports iic_fmc_hpc0_osc1_scl_io]
+#set_property OFFCHIP_TERM NONE [get_ports iic_fmc_hpc0_osc1_sda_io]
 
 
 connect_debug_port dbg_hub/clk [get_nets dclk]

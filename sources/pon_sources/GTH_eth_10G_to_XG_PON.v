@@ -46,6 +46,9 @@ module GTH_eth_10G_to_XG_PON_if(
     
     input xgpon_gt_clk_freerun_p,
     input xgpon_gt_clk_freerun_n,
+    
+    input  wire mgtrefclk0_x0y3_p,
+    input  wire mgtrefclk0_x0y3_n,
 
     input             eth_sys_reset_phy,
     input  wire       dclk_p,
@@ -216,7 +219,7 @@ module GTH_eth_10G_to_XG_PON_if(
     reg [2:0] gt_loopback_config = 3'b000; //no loopback
     
     (* DONT_TOUCH = "TRUE" *) 
-    xxv_ethernet_0_exdes xxv_ethernet_0_top_inst(
+    eth_10G_gtbnk230_x0y27_top eth_10G_if_FMC_GTH(
 		.gt_rxp_in(eth_gt_rxp_in)
         ,.gt_rxn_in(eth_gt_rxn_in)
 		,.gt_txp_out(eth_gt_txp_out)
@@ -338,13 +341,15 @@ module GTH_eth_10G_to_XG_PON_if(
         ,.m_axis_slvlb_d_tready      (1'b1)
     );
     
-    FMC_GTH_top FMC_GTH_top_inst(
+    FMC_GTH_top Xg_PON_if_qsfp_gty(
         .qpll0clk_in                             (qpll0outclk),
         .qpll0refclk_in                          (qpll0outrefclk),
         .qpll1clk_in                             (qpll1outclk),
         .qpll1refclk_in                          (qpll1outrefclk),
         .gtwiz_reset_qpll0lock_in                (qpll0lock),
         .gtwiz_reset_qpll0reset_out              (),
+        .mgtrefclk0_x0y3_p                       (mgtrefclk0_x0y3_p),
+        .mgtrefclk0_x0y3_n                       (mgtrefclk0_x0y3_n),
         .ch0_gthrxn_in(xg_pon_burst_gt_rxn_in),
         .ch0_gthrxp_in(xg_pon_burst_gt_rxp_in),
         .ch0_gthtxn_out(xg_pon_burst_gt_txn_out),

@@ -62,13 +62,23 @@ module xg_PON_frame_sync(
         ,.out_threshold_comparator (out_threshold_comp)
     );
     
+    //get the positive edge of the start and align it to one clock cycle
+    //-----------------Positive Edge Detector--------------------//
+    reg preamble_detected_next;
+    wire preamble_detected_posedge;
+    always@(posedge clk_in)
+        preamble_detected_next <= preamble_detected; 
+    assign preamble_detected_posedge = preamble_detected && (~preamble_detected_next);
+    //----------------------------------------------------------//
+
+    
     (* DONT_TOUCH = "TRUE" *)
     Burst_Mode_Synchronizer Delimiter_Synchronizer_inst (
-        .in_data                   (rxdata_preamble_synced_out)
+        .in_data                   (axis_TDATA_in)
         ,.in_syncword              (32'hb2c50fa1)
-        ,.in_threshold             (7'b0000101)
+        ,.in_threshold             (7'b0000011)
         ,.in_enable                (axis_TVALID_in)
-        ,.in_reset                 (reset_in)
+        ,.in_reset                 (preamble_detected_posedge)
         ,.in_clock                 (clk_in)
         ,.out_data                 (rxdata_delimiter_synced_out)
         ,.out_detected             (delimiter_detected)
@@ -80,10 +90,10 @@ module xg_PON_frame_sync(
     (* DONT_TOUCH = "TRUE" *)
     Burst_Mode_Synchronizer fcs_checker_inst (
         .in_data                   (rxdata_delimiter_synced_out)
-        ,.in_syncword              (32'haaaaaaaa)
-        ,.in_threshold             (7'b0000011)
+        ,.in_syncword              (32'h82D6F416)
+        ,.in_threshold             (7'b0000010)
         ,.in_enable                (axis_TVALID_in)
-        ,.in_reset                 (reset_in)
+        ,.in_reset                 (delimiter_detected)
         ,.in_clock                 (clk_in)
         ,.out_data                 (rxdata_tlast_synced_out)
         ,.out_detected             (tlast_detected)
@@ -107,13 +117,29 @@ module xg_PON_frame_sync(
     reg [32+4+2-1:0] axis_sidechnls_delay_compensated;
     always @(posedge clk_in) begin
         delay_buffer[0] <= {rxdata_delimiter_synced_out, axis_TKEEP_in, axis_TLAST_in, axis_TUSER_in};
-        axis_sidechnls_delay_compensated <= delay_buffer[8];
+        axis_sidechnls_delay_compensated <= delay_buffer[7+1];
     end
-    assign axis_TKEEP_out = axis_sidechnls_delay_compensated[5:2];
+    reg[3:0] tkeep;
+    always @(*) begin
+        if(tlast_detected_posedge) begin
+            if((axis_sidechnls_delay_compensated[37:6] & 32'hFFFFFF00) == 32'h00000000) begin
+                tkeep<=4'h1;
+            end else if ((axis_sidechnls_delay_compensated[37:6] & 32'hFFFF0000) == 32'h00000000) begin
+                tkeep<=4'h3;
+            end else if ((axis_sidechnls_delay_compensated[37:6] & 32'hFF000000) == 32'h00000000) begin
+                tkeep<=4'h7;
+            end else begin
+                tkeep<=4'hf;
+            end
+        end else begin
+            tkeep <= 4'd15;
+        end
+    end
+    assign axis_TKEEP_out = tkeep;
     assign axis_TLAST_out = tlast_detected_posedge;
     assign axis_TUSER_out = axis_sidechnls_delay_compensated[0];
     assign axis_TDATA_out = axis_sidechnls_delay_compensated[37:6];
-
+    
 
     genvar idx_delay;
     generate
@@ -131,7 +157,7 @@ module xg_PON_frame_sync(
     reg [0:0] delimiter_detected_delay_compensated;
     always @(posedge clk_in) begin
         delay_buffer_1[0] <= delimiter_detected;
-        delimiter_detected_delay_compensated <= delay_buffer_1[8];
+        delimiter_detected_delay_compensated <= delay_buffer_1[7+1];
     end
 
     genvar idx_delay_1;
@@ -151,7 +177,7 @@ module xg_PON_frame_sync(
     reg en_count; 
     reg [31:0] tdata = 32'h00000000;
     reg tvalid = 1'b0;
-    reg [3:0] tkeep = 4'd0;
+//    reg [3:0] tkeep = 4'd0;
     reg tuser = 1'b0;
     reg tlast = 1'b0;
     

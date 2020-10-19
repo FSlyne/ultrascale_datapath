@@ -16,6 +16,8 @@
   <xd:arg xd:name="dataOut-&gt;id" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="5"/>
   <xd:arg xd:name="dataOut-&gt;dest" xd:originalName="dataOut" xd:direction="out" xd:interfaceRef="dataOut" xd:busTypeRef="axis" xd:dataWidth="6"/>
   <xd:arg xd:name="*(axis_dataOut_TVALID)" xd:originalName="axis_dataOut_TVALID" xd:direction="out" xd:interfaceRef="axis_dataOut_TVALID" xd:busTypeRef="register" xd:handshakeRef="ap_vld" xd:dataWidth="1" xd:firstOut="0"/>
+  <xd:arg xd:name="*(axis_dataOut_Ch0_VALID)" xd:originalName="axis_dataOut_Ch0_VALID" xd:direction="out" xd:interfaceRef="axis_dataOut_Ch0_VALID" xd:busTypeRef="register" xd:handshakeRef="ap_vld" xd:dataWidth="1" xd:firstOut="0"/>
+  <xd:arg xd:name="*(axis_dataOut_Ch1_VALID)" xd:originalName="axis_dataOut_Ch1_VALID" xd:direction="out" xd:interfaceRef="axis_dataOut_Ch1_VALID" xd:busTypeRef="register" xd:handshakeRef="ap_vld" xd:dataWidth="1" xd:firstOut="0"/>
   <xd:latencyEstimates xd:best-case="0" xd:worst-case="0" xd:average-case="0"/>
-  <xd:resourceEstimates xd:LUT="489" xd:FF="67" xd:BRAM="0" xd:DSP="0"/>
+  <xd:resourceEstimates xd:LUT="649" xd:FF="103" xd:BRAM="0" xd:DSP="0"/>
 </xd:acceleratorMap>

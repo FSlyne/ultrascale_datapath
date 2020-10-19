@@ -98,17 +98,27 @@ module top_tb
     reg             xgpon_gt_clk_freerun;
     reg             gt_refclk_p;
     reg             gt_refclk_n;
+    reg             mgtrefclk0_x0y3_p;
+    reg             mgtrefclk0_x0y3_n;
     reg             sys_reset;
-    wire [1-1:0] eth_mgthrxp3_230_in;
-    wire [1-1:0] eth_mgthrxn3_230_in;
-    wire [1-1:0] eth_mgthtxp3_230_out;
-    wire [1-1:0] eth_mgthtxn3_230_out;
+    wire [1-1:0] eth_gtbnk230_x0y24_rxp_in;
+    wire [1-1:0] eth_gtbnk230_x0y24_rxn_in;
+    wire [1-1:0] eth_gtbnk230_x0y24_txp_out;
+    wire [1-1:0] eth_gtbnk230_x0y24_txn_out;
+
+    wire [1-1:0] eth_gtbnk230_x0y25_rxp_in;
+    wire [1-1:0] eth_gtbnk230_x0y25_rxn_in;
+    wire [1-1:0] eth_gtbnk230_x0y25_txp_out;
+    wire [1-1:0] eth_gtbnk230_x0y25_txn_out;
     
-    wire [1-1:0] eth_mgthrxp0_230_in;
-    wire [1-1:0] eth_mgthrxn0_230_in;
-    wire [1-1:0] eth_mgthtxp0_230_out;
-    wire [1-1:0] eth_mgthtxn0_230_out;
+    wire [1-1:0] eth_gtbnk230_x0y27_rxp_in;
+    wire [1-1:0] eth_gtbnk230_x0y27_rxn_in;
+    wire [1-1:0] eth_gtbnk230_x0y27_txp_out;
+    wire [1-1:0] eth_gtbnk230_x0y27_txn_out;
     
+    wire xg_pon_burst_gt_txp_out;
+    wire xg_pon_burst_gt_txn_out;
+
     reg             restart_tx_rx_0;
     reg             send_continous_pkts_0;
     wire            rx_gt_locked_led_0;
@@ -124,6 +134,8 @@ module top_tb
     begin
       gt_refclk_p = 0;
       gt_refclk_n = 1;
+      mgtrefclk0_x0y3_p = 0;
+      mgtrefclk0_x0y3_n = 1;
       dclk   = 0;
       sys_reset  = 1; 
       restart_tx_rx_0 = 0;
@@ -215,6 +227,18 @@ module top_tb
         gt_refclk_n =0;
         forever #3200000.000   gt_refclk_n = ~ gt_refclk_n; //156.25 MHz
     end
+    
+    initial
+    begin
+        mgtrefclk0_x0y3_p =1;
+        forever #3200000.000   mgtrefclk0_x0y3_p = ~ mgtrefclk0_x0y3_p; //156.25 MHz
+    end
+
+    initial
+    begin
+        mgtrefclk0_x0y3_n =0;
+        forever #3200000.000   mgtrefclk0_x0y3_n = ~ mgtrefclk0_x0y3_n; //156.25 MHz
+    end
 
     initial
     begin
@@ -228,25 +252,38 @@ module top_tb
         forever #2000000.000   xgpon_gt_clk_freerun = ~ xgpon_gt_clk_freerun; // 100 MHz
     end
     
-wire xg_pon_burst_gt_txp_out;
-wire xg_pon_burst_gt_txn_out;
 top top_DUT_inst
 (
   .hb_gtwiz_reset_all_in        (1'b0)
   ,.link_down_latched_reset_in  (1'b0)
+  //for this one-board simulation case, we  are connecting the first emulator 
+  //in gth-x0y24 to the gth interface at "gth_eth_to_Xg_PON_if" module which
+  //is at gth transceiver site- gth-x0y27.
+  //The second emulator in gth-x0y25 is just looped back to itself for now.
+ 
+  //eth 10G emulator ports : emulator in GT bank-230, gth-x0y24
+  //interfacing with gth_eth at x0y27 on "gth_eth_to_Xg_PON_if" module
+  ,.eth_gtbnk230_x0y24_rxp_in         (eth_gtbnk230_x0y27_txp_out)
+  ,.eth_gtbnk230_x0y24_rxn_in         (eth_gtbnk230_x0y27_txn_out)
+  ,.eth_gtbnk230_x0y24_txp_out        (eth_gtbnk230_x0y24_txp_out)
+  ,.eth_gtbnk230_x0y24_txn_out        (eth_gtbnk230_x0y24_txn_out)
+
+  //eth 10G emulator ports : emulator in GT bank-230, gth-x0y25
+  //looping back the gt serial ports on itself.
+  ,.eth_gtbnk230_x0y25_rxp_in         (eth_gtbnk230_x0y25_txp_out)
+  ,.eth_gtbnk230_x0y25_rxn_in         (eth_gtbnk230_x0y25_txn_out)
+  ,.eth_gtbnk230_x0y25_txp_out        (eth_gtbnk230_x0y25_txp_out)
+  ,.eth_gtbnk230_x0y25_txn_out        (eth_gtbnk230_x0y25_txn_out)
   
-  //eth 10G emulator ports
-  ,.eth_mgthrxp0_230_in         (eth_mgthtxp3_230_out)
-  ,.eth_mgthrxn0_230_in         (eth_mgthtxn3_230_out)
-  ,.eth_mgthtxp0_230_out        (eth_mgthtxp0_230_out)
-  ,.eth_mgthtxn0_230_out        (eth_mgthtxn0_230_out)
+  //eth10g to xg-pon if ports : eth10 if in GT bank-230, gth-x0y27
+  //interfacing with gth_eth at x0y24 on "gth_eth_10G_emulator" module
+  ,.eth_gtbnk230_x0y27_rxp_in         (eth_gtbnk230_x0y24_txp_out)
+  ,.eth_gtbnk230_x0y27_rxn_in         (eth_gtbnk230_x0y24_txn_out)
+  ,.eth_gtbnk230_x0y27_txp_out        (eth_gtbnk230_x0y27_txp_out)
+  ,.eth_gtbnk230_x0y27_txn_out        (eth_gtbnk230_x0y27_txn_out)
   
-  //eth10g to xg-pon if ports
-  ,.eth_mgthrxp3_230_in         (eth_mgthtxp0_230_out)
-  ,.eth_mgthrxn3_230_in         (eth_mgthtxn0_230_out)
-  ,.eth_mgthtxp3_230_out        (eth_mgthtxp3_230_out)
-  ,.eth_mgthtxn3_230_out        (eth_mgthtxn3_230_out)
-  
+  //10G xg-PON gty BCDR ports : gtyBCDR in GT bank-127, gty-x0y12
+  //looping back the gt serial ports on itself.
   ,.xg_pon_burst_gt_txp_out     (xg_pon_burst_gt_txp_out)
   ,.xg_pon_burst_gt_txn_out     (xg_pon_burst_gt_txn_out)
   ,.xg_pon_burst_gt_rxp_in      (xg_pon_burst_gt_txp_out)
@@ -261,6 +298,8 @@ top top_DUT_inst
   
   ,.eth_gt_refclk_p             (gt_refclk_p)
   ,.eth_gt_refclk_n             (gt_refclk_n)
+  ,.mgtrefclk0_x0y3_p           (mgtrefclk0_x0y3_p)
+  ,.mgtrefclk0_x0y3_n           (mgtrefclk0_x0y3_n)
   ,.dclk_p                      (dclk)
   ,.dclk_n                      (~dclk)
   ,.xgpon_gt_clk_freerun_p      (xgpon_gt_clk_freerun)

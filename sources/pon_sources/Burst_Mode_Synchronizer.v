@@ -142,7 +142,7 @@ genvar idx_diff;
 generate
     for (idx_diff = 0; idx_diff < 32; idx_diff = idx_diff + 1) begin : sad_subtractor
         always @(posedge in_clock) begin
-            absolute_differences[idx_diff] = in_syncword ^ data_double_buffer[31+idx_diff : idx_diff];
+            absolute_differences[idx_diff] = in_syncword ^ data_double_buffer[63-idx_diff : 32-idx_diff];
         end
     end
 endgenerate
@@ -310,7 +310,7 @@ genvar idx_shift;
 generate
     for (idx_shift = 0; idx_shift < 32; idx_shift = idx_shift + 1) begin : data_shifter
         always @(posedge in_clock) begin
-            output_shifts[idx_shift] = data_double_buffer_delayed[6][31+idx_shift : idx_shift];
+            output_shifts[idx_shift] = data_double_buffer_delayed[6][63-idx_shift : 32-idx_shift];
         end
     end
 endgenerate

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xd:acceleratorMap xmlns:xd="http://www.xilinx.com/xidane" xd:functionName="ControlledBurstCheck" xd:componentRef="ControlledBurstCheck" xd:initiationInterval="1" xd:clockPeriod="10.000000" xd:sequential="true" xd:hostMachine="64" xd:reset="control">
+  <xd:arg xd:name="enable" xd:originalName="enable" xd:direction="in" xd:interfaceRef="enable" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="burst_length" xd:originalName="burst_length" xd:direction="in" xd:interfaceRef="burst_length" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="burst_period" xd:originalName="burst_period" xd:direction="in" xd:interfaceRef="burst_period" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="*(TDATAin)" xd:originalName="TDATAin" xd:direction="in" xd:interfaceRef="TDATAin_V" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="*(TKEEPin)" xd:originalName="TKEEPin" xd:direction="in" xd:interfaceRef="TKEEPin_V" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="4"/>
+  <xd:arg xd:name="TVALIDin" xd:originalName="TVALIDin" xd:direction="in" xd:interfaceRef="TVALIDin" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="TLASTin" xd:originalName="TLASTin" xd:direction="in" xd:interfaceRef="TLASTin" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="*(numerrors)" xd:originalName="numerrors" xd:direction="out" xd:interfaceRef="numerrors_V" xd:busTypeRef="register" xd:handshakeRef="ap_vld" xd:dataWidth="32" xd:firstOut="0"/>
+  <xd:latencyEstimates xd:best-case="0" xd:worst-case="0" xd:average-case="0"/>
+  <xd:resourceEstimates xd:LUT="1087" xd:FF="65" xd:BRAM="0" xd:DSP="0"/>
+</xd:acceleratorMap>

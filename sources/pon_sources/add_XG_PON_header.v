@@ -148,15 +148,40 @@ module add_XG_PON_header(
     assign axis_TUSER = en_count ? tuser : axis_TUSER_delyd;
 
     ////////////////////////////add fcs xgpon////////////////////////
+    
+    reg [31:0] axis_TDATA_L;
+    reg axis_TVALID_L;
+    reg [3:0] axis_TKEEP_L;
+    reg axis_TLAST_L;
+    reg axis_TUSER_L;    
+    always@(*) begin
+        axis_TVALID_L = axis_TVALID;
+        axis_TKEEP_L = axis_TVALID ? axis_TKEEP : 4'h0;
+        axis_TLAST_L = axis_TLAST;
+        axis_TUSER_L = axis_TUSER;
+        case (axis_TKEEP)
+            4'b0000 : axis_TDATA_L = axis_TVALID ? axis_TDATA : 32'h00000000;
+            4'b0001 : axis_TDATA_L = axis_TVALID ? (axis_TDATA & 32'h000000FF) : 32'h00000000;
+            4'b0011 : axis_TDATA_L = axis_TVALID ? (axis_TDATA & 32'h0000FFFF) : 32'h00000000;
+            4'b0111 : axis_TDATA_L = axis_TVALID ? (axis_TDATA & 32'h00FFFFFF) : 32'h00000000;
+            4'b1111 : axis_TDATA_L = axis_TVALID ? (axis_TDATA & 32'hFFFFFFFF) : 32'h00000000;
+            default : axis_TDATA_L = axis_TVALID ? axis_TDATA : 32'h00000000;
+        endcase
+    end
+    
     reg axis_TLAST_in_1clk_dely;
     always@(posedge axis_clk) begin
-        axis_TLAST_in_1clk_dely<=axis_TLAST;
+        axis_TLAST_in_1clk_dely<=axis_TLAST_L;
     end
-    assign axis_TDATA_out = axis_TLAST_in_1clk_dely ? 32'haaaaaaaa : axis_TDATA;
-    assign axis_TVALID_out = axis_TLAST_in_1clk_dely ? 1'b1 : axis_TVALID;
+    
+    //We are assigh the pattern 32'h82D6 F416 as the frame trailer sequence to determine the 
+    //frame end. this sequence is based on the grey coding. However, we can also use the generic
+    //sequence 32'haaaaaaaa. which has some probability of occurance in the frame.
+    assign axis_TDATA_out = axis_TLAST_in_1clk_dely ? 32'h82D6F416 : axis_TDATA_L;
+    assign axis_TVALID_out = axis_TLAST_in_1clk_dely ? 1'b1 : axis_TVALID_L;
     assign axis_TLAST_out = axis_TLAST_in_1clk_dely;
-    assign axis_TKEEP_out = axis_TLAST_in_1clk_dely ? 4'hf : axis_TKEEP;
-    assign axis_TUSER_out = axis_TLAST_in_1clk_dely ? 1'b0 : axis_TUSER;
+    assign axis_TKEEP_out = axis_TLAST_in_1clk_dely ? 4'hf : axis_TKEEP_L;
+    assign axis_TUSER_out = axis_TLAST_in_1clk_dely ? 1'b0 : axis_TUSER_L;
     
 
 endmodule

@@ -23,6 +23,9 @@
 module PRBS_Generator(
     output wire [31:0] gtwiz_userdata_tx_axis_TDATA
     ,output wire axis_dataOut_TVALID
+    ,output wire axis_dataOut_Ch0_VALID                // output wire [0 : 0] axis_dataOut_Ch0_VALID
+    ,output wire axis_dataOut_Ch1_VALID                // output wire [0 : 0] axis_dataOut_Ch1_VALID
+
     ,output wire axis_dataOut_TLAST
     ,output wire axis_dataOut_TUSER
     ,output wire [3:0] axis_dataOut_TKEEP
@@ -94,6 +97,8 @@ module PRBS_Generator(
 
   ControlledBurstGen_0 ControlledBurstGen_inst(
     .axis_dataOut_TVALID_ap_vld(axis_dataOut_TVALID_ap_vld),  // output wire axis_dataOut_TVALID_ap_vld
+    .axis_dataOut_Ch0_VALID_ap_vld(axis_dataOut_Ch0_VALID_ap_vld),  // output wire axis_dataOut_Ch0_VALID_ap_vld
+    .axis_dataOut_Ch1_VALID_ap_vld(axis_dataOut_Ch1_VALID_ap_vld),  // output wire axis_dataOut_Ch1_VALID_ap_vld
     .ap_clk (tx_axis_usrclk),
     .ap_rst_n (~example_stimulus_reset_sync),
     //optional control ports -- fixing it for now
@@ -103,7 +108,7 @@ module PRBS_Generator(
     .ap_ready(),                // output wire ap_ready
     .enable (example_stimulus_reset_sync^1'b1),  // input wire [0 : 0] enable
     .preamble_length(preamble_length),
-    .add_delimiter(1'b0),                            // input wire [0 : 0] add_delimiter
+    .add_delimiter(1'b0),  // delimiter will be added by the add_xg_pon header module
     .preamble(32'h05560556),
     .delimiter(32'hB2C50FA1),
     .burst_period(burst_period),
@@ -117,8 +122,10 @@ module PRBS_Generator(
     .dataOut_TUSER(axis_dataOut_TUSER),      // output wire [1 : 0] dataOut_TUSER
     .dataOut_TLAST(axis_dataOut_TLAST),      // output wire [0 : 0] dataOut_TLAST
     .dataOut_TID(),          // output wire [4 : 0] dataOut_TID
-    .axis_dataOut_TVALID(axis_dataOut_TVALID)                // output wire [0 : 0] axis_dataOut_TVALID
-  );
+    .axis_dataOut_TVALID(axis_dataOut_TVALID),                // output wire [0 : 0] axis_dataOut_TVALID
+    .axis_dataOut_Ch0_VALID(axis_dataOut_Ch0_VALID),                // output wire [0 : 0] axis_dataOut_Ch0_VALID
+    .axis_dataOut_Ch1_VALID(axis_dataOut_Ch1_VALID)                // output wire [0 : 0] axis_dataOut_Ch1_VALID
+);
 
 
 endmodule

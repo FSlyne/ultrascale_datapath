@@ -1,0 +1,19 @@
+INFO: [HLS 200-10] Running 'C:/Xilinx/Vivado/2017.3/bin/unwrapped/win64.o/vivado_hls.exe'
+INFO: [HLS 200-10] For user 'Sandip Das' on host 'desktop-1l9hu31' (Windows NT_amd64 version 6.2) on Wed Oct 14 17:24:05 +0100 2020
+INFO: [HLS 200-10] In directory 'E:/WorkingDir/newcon/axi_eth_10g_to_PON_FMC_GTH/sources/hls_sources/ControlledBurstCheck'
+INFO: [HLS 200-10] Opening project 'E:/WorkingDir/newcon/axi_eth_10g_to_PON_FMC_GTH/sources/hls_sources/ControlledBurstCheck/ControlledBurstCheck'.
+INFO: [HLS 200-10] Opening solution 'E:/WorkingDir/newcon/axi_eth_10g_to_PON_FMC_GTH/sources/hls_sources/ControlledBurstCheck/ControlledBurstCheck/solution1'.
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
+INFO: [HLS 200-10] Setting target device to 'xcvu095-ffva2104-2-e'
+INFO: [IMPL 213-8] Exporting RTL as an IP in IP-XACT.
+
+****** Vivado v2017.3 (64-bit)
+  **** SW Build 2018833 on Wed Oct  4 19:58:22 MDT 2017
+  **** IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
+    ** Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+
+source run_ippack.tcl -notrace
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2017.3/data/ip'.
+INFO: [Common 17-206] Exiting Vivado at Wed Oct 14 17:24:27 2020...
