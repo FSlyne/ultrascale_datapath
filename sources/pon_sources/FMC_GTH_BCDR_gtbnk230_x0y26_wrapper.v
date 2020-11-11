@@ -91,12 +91,19 @@ module FMC_GTH_BCDR_gtbnk230_x0y26_inst (
  ,input  wire [15:0] drpdi_in
  ,input  wire [0:0] drpen_in
  ,input  wire [0:0] drpwe_in
- ,input  wire [0:0] rxcdrovrden_in
- ,input  wire [0:0] rxlpmen_in
- ,output wire [16:0] dmonitorout_out
  ,output wire [15:0] drpdo_out
  ,output wire [0:0] drprdy_out
  ,output wire [0:0] gtpowergood_out
+ ,input  wire [0:0] rxcdrovrden_in
+ ,output wire [16:0] dmonitorout_out
+ ,input  wire [0:0] rxlpmen_in
+ //electrical idle and PD ports
+ ,input wire [0 : 0] txelecidle_in
+ ,input wire [1 : 0] txpd_in
+ //CDR check ports
+ ,output wire [0:0] rxcdrlock_out
+ ,output wire [0 : 0] rxphaligndone_out
+ ,output wire [0 : 0] rxsyncdone_out
  ,output wire [0:0] rxpmaresetdone_out
  ,output wire [0:0] txpmaresetdone_out
  
@@ -183,10 +190,15 @@ module FMC_GTH_BCDR_gtbnk230_x0y26_inst (
    ,.qpll1refclk_in                          (qpll1refclk_in)
    ,.rxcdrovrden_in                          (rxcdrovrden_in)
    ,.rxlpmen_in                              (rxlpmen_in)
-   ,.dmonitorout_out                         (dmonitorout_out)
-   ,.drpdo_out                               (drpdo_out)
-   ,.drprdy_out                              (drprdy_out)
-   ,.gtpowergood_out                         (gtpowergood_int)
+   ,.txelecidle_in(txelecidle_in)                                            // input wire [0 : 0] txelecidle_in
+   ,.txpd_in(txpd_in)                                                        // input wire [1 : 0] txpd_in
+   ,.dmonitorout_out(dmonitorout_out)                                       // output wire [16 : 0] dmonitorout_out
+   ,.drpdo_out(drpdo_out)                                                // output wire [15 : 0] drpdo_out
+   ,.drprdy_out(drprdy_out)                                                  // output wire [0 : 0] drprdy_out
+   ,.gtpowergood_out(gtpowergood_out)                                        // output wire [0 : 0] gtpowergood_out
+   ,.rxcdrlock_out(rxcdrlock_out)                                            // output wire [0 : 0] rxcdrlock_out
+   ,.rxphaligndone_out(rxphaligndone_out)                                    // output wire [0 : 0] rxphaligndone_out
+   ,.rxsyncdone_out(rxsyncdone_out)                                          // output wire [0 : 0] rxsyncdone_out
    ,.rxpmaresetdone_out                      (rxpmaresetdone_out)
    ,.txpmaresetdone_out                      (txpmaresetdone_out)
 );

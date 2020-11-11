@@ -289,10 +289,11 @@ always @(posedge in_clock) begin
         end else begin
             // Keep previous shift when comparator is not enabled
             minimum_sad_shift     <= minimum_sad_shift;
-            if(min_sad_value[30] <= in_threshold)
+            out_detected          <= 1'b0; //modified by sandip on 08/11/20
+            /*if(min_sad_value[30] <= in_threshold)
                out_detected          <= 1'b1;
             else
-               out_detected          <= 1'b0;   
+               out_detected          <= 1'b0;*/   
         end
     end else begin
         // Reset shift to zero

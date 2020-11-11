@@ -42,8 +42,9 @@ module GTH_eth_10G_emulator(
     input wire  eth_restart_tx_rx,
     input wire send_continous_pkts,   // This port can be used to send continous packets 
 	
-    input             eth_sys_reset_phy,
-    input  wire       dclk,    
+    input             eth_sys_reset,
+    input  wire       dclk,
+    output wire eth_sys_reset_vio, //reset the ethernet interface from vio or phy.    
         
     ////**--sharedlogic ports to bring to the top level--**////
     //GT bank common qpll clock ports
@@ -138,10 +139,7 @@ module GTH_eth_10G_emulator(
     ///---------------------------------------------ends here
     
     assign axis_usrtx_aresetn = ~hb_gtwiz_reset_all; //TEMPORARY need to be changed
-    wire eth_sys_reset;
-    wire eth_sys_reset_vio;
-    assign eth_sys_reset = eth_sys_reset_phy||eth_sys_reset_vio;     
-    
+
     wire eth_rx_gt_locked_led;     // Indicates GT LOCK
     wire eth_rx_block_lock_led;    // Indicates Core Block Lock
     wire [4:0] eth_completion_status;
@@ -174,12 +172,17 @@ module GTH_eth_10G_emulator(
     wire eth_emu_2_axis_usrtx_TLAST;
     wire eth_emu_2_axis_usrtx_TUSER;
     wire [3:0] eth_emu_2_axis_usrtx_TKEEP;
-
+    wire eth2_tx_axis_usrclk;
     wire [31:0] eth_emu_2_axis_usrrx_TDATA;
     wire eth_emu_2_axis_usrrx_TVALID;
     wire eth_emu_2_axis_usrrx_TLAST;
     wire eth_emu_2_axis_usrrx_TUSER;
     wire [3:0] eth_emu_2_axis_usrrx_TKEEP;
+    wire eth2_rx_axis_usrclk;
+    ///Assignment to bring shared clocking logic to top level
+    assign tx_clk_out_1 = eth2_tx_axis_usrclk;
+    assign rx_clk_out_1 = eth2_rx_axis_usrclk;
+    ///---------------------------------------------ends here
 
     assign axis_usrtx_TREADY = axis_dataOut_Ch0_VALID ? eth_axis_usrtx_TREADY : eth_emu_2_axis_usrtx_TREADY;
     (* DONT_TOUCH = "TRUE" *)
@@ -198,7 +201,6 @@ module GTH_eth_10G_emulator(
 		,.burst_length                       (burst_length_vio_int)
 		,.burst_period                       (burst_period_vio_int)                               
     );
-      
     wire [31:0] gtwiz_userdata_rx_synced_int;
     wire preamble_detected;
     wire [63:0] out_data_double_buffer;
@@ -220,12 +222,37 @@ module GTH_eth_10G_emulator(
     // Link management
     // -------------------------------------------------------------------------------------------------------------------
     wire error_accumulator_clear;
+    wire [31:0] num_frames_recvd_eth_emu1;
+    wire [31:0] num_errors_this_fr_eth_emu1;
+    wire [31:0] total_bits_this_fr_eth_emu1;
+    wire [63:0] eth_emu1_accumulated_error;
+    wire [63:0] total_bits_accumulated_eth_emu1;
+    
+    wire [31:0] num_frames_recvd_eth_emu2;
+    wire [31:0] num_errors_this_fr_eth_emu2;
+    wire [31:0] total_bits_this_fr_eth_emu2;
+    wire [63:0] eth_emu2_accumulated_error;
+    wire [63:0] total_bits_accumulated_eth_emu2;
+
     wire [2:0] gt_loopback_in_0;
     vio_top_wrapper vio_top_wrapper_inst(
         .hb0_gtwiz_userclk_tx_usrclk2_int(eth_tx_axis_usrclk)
         ,.eth_rx_gt_locked_led(eth_rx_gt_locked_led)     // Indicates GT LOCK
         ,.eth_rx_block_lock_led(eth_rx_block_lock_led)    // Indicates Core Block Lock
         ,.eth_completion_status(eth_completion_status)
+        
+        ,.num_frames_recvd_eth_emu1(num_frames_recvd_eth_emu1)
+        ,.num_errors_this_fr_eth_emu1(num_errors_this_fr_eth_emu1)
+        ,.total_bits_this_fr_eth_emu1(total_bits_this_fr_eth_emu1)
+        ,.eth_emu1_accumulated_error(eth_emu1_accumulated_error)
+        ,.total_bits_accumulated_eth_emu1(total_bits_accumulated_eth_emu1)
+        
+        ,.num_frames_recvd_eth_emu2(num_frames_recvd_eth_emu2)
+        ,.num_errors_this_fr_eth_emu2(num_errors_this_fr_eth_emu2)
+        ,.total_bits_this_fr_eth_emu2(total_bits_this_fr_eth_emu2)
+        ,.eth_emu2_accumulated_error(eth_emu2_accumulated_error)
+        ,.total_bits_accumulated_eth_emu2(total_bits_accumulated_eth_emu2)
+        
         ,.preamble_length_vio_int(preamble_length_vio_int)
         ,.burst_length_vio_int(burst_length_vio_int)
         ,.burst_period_vio_int(burst_period_vio_int)
@@ -234,12 +261,60 @@ module GTH_eth_10G_emulator(
         ,.eth_sys_reset_vio(eth_sys_reset_vio)
     );
     
-    assign eth_axis_usrtx_TDATA = axis_dataOut_Ch0_VALID ? axis_usrtx_TDATA : 32'h00000000;
+    /*assign eth_axis_usrtx_TDATA = axis_dataOut_Ch0_VALID ? axis_usrtx_TDATA : 32'h00000000;
     assign eth_axis_usrtx_TVALID = axis_dataOut_Ch0_VALID ? axis_usrtx_TVALID : 1'b0;
     assign eth_axis_usrtx_TLAST = axis_dataOut_Ch0_VALID ? axis_usrtx_TLAST : 1'b0;
     assign eth_axis_usrtx_TUSER = axis_dataOut_Ch0_VALID ? axis_usrtx_TUSER : 1'b0;
-    assign eth_axis_usrtx_TKEEP = axis_dataOut_Ch0_VALID ? axis_usrtx_TKEEP : 4'h0;
+    assign eth_axis_usrtx_TKEEP = axis_dataOut_Ch0_VALID ? axis_usrtx_TKEEP : 4'h0;*/
+    
+    assign eth_axis_usrtx_TDATA = axis_usrtx_TDATA;
+    assign eth_axis_usrtx_TVALID = axis_usrtx_TVALID;
+    assign eth_axis_usrtx_TLAST = axis_usrtx_TLAST;
+    assign eth_axis_usrtx_TUSER = axis_usrtx_TUSER;
+    assign eth_axis_usrtx_TKEEP = axis_usrtx_TKEEP;
+    
+    /*wire [31:0] eth_axis_usrtx_TDATA_scrmbled;
+    //wire eth_axis_usrtx_TREADY_scrmb_sync;
+    wire eth_axis_usrtx_TVALID_scrmb_sync;
+    wire eth_axis_usrtx_TLAST_scrmb_sync;
+    wire eth_axis_usrtx_TUSER_scrmb_sync;
+    wire [3:0] eth_axis_usrtx_TKEEP_scrmb_sync;
 
+    (* DONT_TOUCH = "TRUE" *) 
+    lfsr_scramble #
+      (
+          // width of LFSR
+          .LFSR_WIDTH(58)
+          // LFSR polynomial
+          ,.LFSR_POLY(58'h8000000001)
+          // Initial state
+          ,.LFSR_INIT({58{1'b1}})
+          // LFSR configuration: "GALOIS", "FIBONACCI"
+          ,.LFSR_CONFIG("FIBONACCI")
+          // bit-reverse input and output
+          ,.REVERSE(1'b0)
+          // width of data bus
+          ,.DATA_WIDTH(32)
+          // implementation style: "AUTO", "LOOP", "REDUCTION"
+          ,.STYLE("AUTO")
+      )lfsr_scramble_inst(
+          .clk(eth_tx_axis_usrclk)
+          ,.rst(eth_axis_usrtx_TLAST)
+          ,.data_in(eth_axis_usrtx_TDATA)
+          ,.data_in_valid(eth_axis_usrtx_TVALID & axis_usrtx_TREADY)
+          ,.data_out(eth_axis_usrtx_TDATA_scrmbled)
+      );
+    // 1 clock cycle delay to match the scrambler
+    reg [6:0] delay_reg_1_clk[1:0];
+    always@(posedge eth_tx_axis_usrclk) begin
+        delay_reg_1_clk[0] <= {eth_axis_usrtx_TVALID, eth_axis_usrtx_TKEEP, eth_axis_usrtx_TLAST, eth_axis_usrtx_TUSER};
+        delay_reg_1_clk[1] <=delay_reg_1_clk[0];
+    end
+    assign eth_axis_usrtx_TVALID_scrmb_sync = delay_reg_1_clk[0][6];
+    assign eth_axis_usrtx_TLAST_scrmb_sync = delay_reg_1_clk[0][1];
+    assign eth_axis_usrtx_TUSER_scrmb_sync = delay_reg_1_clk[0][0];
+    assign eth_axis_usrtx_TKEEP_scrmb_sync = delay_reg_1_clk[0][5:2];*/
+    
 	(* DONT_TOUCH = "TRUE" *) 
 	eth_10G_gtbnk230_x0y24_top eth_10G_gtbnk230_x0y24_inst(
 		.gt_rxp_in(eth_gt_x0y24_rxp_in)
@@ -299,30 +374,62 @@ module GTH_eth_10G_emulator(
         ,.gtwiz_reset_all_0(gtwiz_reset_all_0)
 	);
 	
-wire [31 : 0] numerrors_V;
+    /*wire [31:0] eth_axis_usrrx_TDATA_scrmbled;
+    //wire eth_axis_usrtx_TREADY_scrmb_sync;
+    wire eth_axis_usrrx_TVALID_scrmb_sync;
+    wire eth_axis_usrrx_TLAST_scrmb_sync;
+    wire eth_axis_usrrx_TUSER_scrmb_sync;
+    wire [3:0] eth_axis_usrrx_TKEEP_scrmb_sync;
+
+    (* DONT_TOUCH = "TRUE" *) 
+    lfsr_descramble #
+      (
+          // width of LFSR
+          .LFSR_WIDTH(58)
+          // LFSR polynomial
+          ,.LFSR_POLY(58'h8000000001)
+          // Initial state
+          ,.LFSR_INIT({58{1'b1}})
+          // LFSR configuration: "GALOIS", "FIBONACCI"
+          ,.LFSR_CONFIG("FIBONACCI")
+          // bit-reverse input and output
+          ,.REVERSE(1'b0)
+          // width of data bus
+          ,.DATA_WIDTH(32)
+          // implementation style: "AUTO", "LOOP", "REDUCTION"
+          ,.STYLE("AUTO")
+      )lfsr_descramble_inst(
+          .clk(eth_rx_axis_usrclk)
+          ,.rst(eth_axis_usrrx_TLAST)
+          ,.data_in(eth_axis_usrrx_TDATA)
+          ,.data_in_valid(eth_axis_usrrx_TVALID)
+          ,.data_out(eth_axis_usrrx_TDATA_scrmbled)
+      );
+    // 1 clock cycle delay to match the scrambler
+    reg [6:0] rx_delay_reg_1_clk[1:0];
+    always@(posedge eth_tx_axis_usrclk) begin
+        rx_delay_reg_1_clk[0] <= {eth_axis_usrrx_TVALID, eth_axis_usrrx_TKEEP, eth_axis_usrrx_TLAST, eth_axis_usrrx_TUSER};
+        rx_delay_reg_1_clk[1] <=rx_delay_reg_1_clk[0];
+    end
+    assign eth_axis_usrrx_TVALID_scrmb_sync = rx_delay_reg_1_clk[0][6];
+    assign eth_axis_usrrx_TLAST_scrmb_sync = rx_delay_reg_1_clk[0][1];
+    assign eth_axis_usrrx_TUSER_scrmb_sync = rx_delay_reg_1_clk[0][0];
+    assign eth_axis_usrrx_TKEEP_scrmb_sync = rx_delay_reg_1_clk[0][5:2];*/
+   	
 (* DONT_TOUCH = "TRUE" *)
 ControlledBurstCheck_0 Burst_checker_eth_emu1_inst (
-    .numerrors_V_ap_vld(numerrors_V_ap_vld),  // output wire numerrors_V_ap_vld
     .ap_clk(eth_rx_axis_usrclk),                          // input wire ap_clk
-    .ap_rst(eth_sys_reset),                      // input wire ap_rst
+    .ap_rst(error_accumulator_clear),                      // input wire ap_rst
     .enable(1'b1),                          // input wire [0 : 0] enable
-    .burst_length(burst_length_vio_int),              // input wire [31 : 0] burst_length
-    .burst_period(burst_period_vio_int),              // input wire [31 : 0] burst_period
     .TVALIDin(eth_axis_usrrx_TVALID),            // input wire dataIn_TVALID
     .TDATAin_V(eth_axis_usrrx_TDATA),              // input wire [31 : 0] dataIn_TDATA
     .TKEEPin_V(eth_axis_usrrx_TKEEP),              // input wire [3 : 0] dataIn_TKEEP
     .TLASTin(eth_axis_usrrx_TLAST),              // input wire [0 : 0] dataIn_TLAST
-    .numerrors_V(numerrors_V)                // output wire [31 : 0] numerrors_V
-);
-
-wire [31 : 0] error_accumulated;
-(* DONT_TOUCH = "TRUE" *)
-error_accumulator error_accumulator_eth_emu1_inst (
-  .B(numerrors_V),            // input wire [31 : 0] B
-  .CLK(eth_rx_axis_usrclk),        // input wire CLK
-  .BYPASS(eth_axis_usrrx_TLAST),  // input wire BYPASS: //active low
-  .SCLR(error_accumulator_clear),      // input wire SCLR : //clear accumulator
-  .Q(error_accumulated)            // output wire [31 : 0] Q
+    .num_frames_recvd_V(num_frames_recvd_eth_emu1),              // output wire [31 : 0] num_frames_recvd_V
+    .num_errors_this_fr_V(num_errors_this_fr_eth_emu1),          // output wire [31 : 0] num_errors_this_fr_V
+    .total_bits_this_fr_V(total_bits_this_fr_eth_emu1),          // output wire [31 : 0] total_bits_this_fr_V
+    .num_errors_accumulated_V(eth_emu1_accumulated_error),  // output wire [63 : 0] num_errors_accumulated_V
+    .total_bits_accumulated_V(total_bits_accumulated_eth_emu1)  // output wire [63 : 0] total_bits_accumulated_V
 );
 
     assign eth_emu_2_axis_usrtx_TDATA = axis_dataOut_Ch1_VALID ? axis_usrtx_TDATA : 32'h00000000;
@@ -330,6 +437,27 @@ error_accumulator error_accumulator_eth_emu1_inst (
     assign eth_emu_2_axis_usrtx_TLAST = axis_dataOut_Ch1_VALID ? axis_usrtx_TLAST : 1'b0;
     assign eth_emu_2_axis_usrtx_TUSER = axis_dataOut_Ch1_VALID ? axis_usrtx_TUSER : 1'b0;
     assign eth_emu_2_axis_usrtx_TKEEP = axis_dataOut_Ch1_VALID ? axis_usrtx_TKEEP : 4'h0;
+    wire [38:0] signal_cdc_out_sync;
+    (* DONT_TOUCH = "TRUE" *)
+    cdc_sync_2stage 
+      #(
+        .WIDTH        (39)
+      ) eth_emu2_usrdata_cdc_sync_2stage_syncer (
+        .clk          (eth2_tx_axis_usrclk),
+        .signal_in    ({eth_emu_2_axis_usrtx_TDATA, eth_emu_2_axis_usrtx_TVALID, eth_emu_2_axis_usrtx_TLAST, eth_emu_2_axis_usrtx_TUSER, eth_emu_2_axis_usrtx_TKEEP}),
+        .signal_out   (signal_cdc_out_sync)
+      );
+      wire [31:0] eth_emu_2_axis_usrtx_TDATA_sync;
+      wire eth_emu_2_axis_usrtx_TVALID_sync;
+      wire eth_emu_2_axis_usrtx_TLAST_sync;
+      wire eth_emu_2_axis_usrtx_TUSER_sync;
+      wire [3:0] eth_emu_2_axis_usrtx_TKEEP_sync;
+      assign eth_emu_2_axis_usrtx_TDATA_sync = signal_cdc_out_sync[38:7];
+      assign eth_emu_2_axis_usrtx_TVALID_sync = signal_cdc_out_sync[6];
+      assign eth_emu_2_axis_usrtx_TLAST_sync = signal_cdc_out_sync[5];
+      assign eth_emu_2_axis_usrtx_TUSER_sync = signal_cdc_out_sync[4];
+      assign eth_emu_2_axis_usrtx_TKEEP_sync = signal_cdc_out_sync[3:0];
+
 /*    wire [31:0] cdc_eth_emu_2_axis_usrtx_TDATA;
     wire cdc_eth_emu_2_axis_usrtx_TREADY;
     wire cdc_eth_emu_2_axis_usrtx_TVALID;
@@ -382,11 +510,11 @@ axis_master_slave_lb_fifo cdc_fifo_inst (
 
 		//// TX_0 User Interface Signals
 		,.tx_axis_tready_0(eth_emu_2_axis_usrtx_TREADY)
-		,.tx_axis_tvalid_0(eth_emu_2_axis_usrtx_TVALID)
-		,.tx_axis_tdata_0(eth_emu_2_axis_usrtx_TDATA)
-		,.tx_axis_tlast_0(eth_emu_2_axis_usrtx_TLAST)
-		,.tx_axis_tkeep_0(eth_emu_2_axis_usrtx_TKEEP)
-		,.tx_axis_tuser_0(eth_emu_2_axis_usrtx_TUSER)
+		,.tx_axis_tvalid_0(eth_emu_2_axis_usrtx_TVALID_sync)
+		,.tx_axis_tdata_0(eth_emu_2_axis_usrtx_TDATA_sync)
+		,.tx_axis_tlast_0(eth_emu_2_axis_usrtx_TLAST_sync)
+		,.tx_axis_tkeep_0(eth_emu_2_axis_usrtx_TKEEP_sync)
+		,.tx_axis_tuser_0(eth_emu_2_axis_usrtx_TUSER_sync)
 		
 		/// bringing Shared logic ports to top level       
         ////**--sharedlogic ports to bring to the top level--**////
@@ -421,30 +549,20 @@ axis_master_slave_lb_fifo cdc_fifo_inst (
         ,.gtwiz_reset_all_0(gtwiz_reset_all_0)
 	);
 
-wire [31 : 0] numerrors_eth_emu2;
 (* DONT_TOUCH = "TRUE" *)
 ControlledBurstCheck_0 Burst_checker_eth_emu2_inst (
-    .numerrors_V_ap_vld(numerrors_eth_emu2_ap_vld),  // output wire numerrors_V_ap_vld
-    .ap_clk(eth_rx_axis_usrclk),                          // input wire ap_clk
-    .ap_rst(eth_sys_reset),                      // input wire ap_rst
+    .ap_clk(eth2_rx_axis_usrclk),                          // input wire ap_clk
+    .ap_rst(error_accumulator_clear),                      // input wire ap_rst
     .enable(1'b1),                          // input wire [0 : 0] enable
-    .burst_length(burst_length_vio_int),              // input wire [31 : 0] burst_length
-    .burst_period(burst_period_vio_int),              // input wire [31 : 0] burst_period
     .TVALIDin(eth_emu_2_axis_usrrx_TVALID),            // input wire dataIn_TVALID
     .TDATAin_V(eth_emu_2_axis_usrrx_TDATA),              // input wire [31 : 0] dataIn_TDATA
     .TKEEPin_V(eth_emu_2_axis_usrrx_TKEEP),              // input wire [3 : 0] dataIn_TKEEP
     .TLASTin(eth_emu_2_axis_usrrx_TLAST),              // input wire [0 : 0] dataIn_TLAST
-    .numerrors_V(numerrors_eth_emu2)                // output wire [31 : 0] numerrors_V
-);
-
-wire [31 : 0] error_accumulated2;
-(* DONT_TOUCH = "TRUE" *)
-error_accumulator error_accumulator_eth_emu2_inst (
-  .B(numerrors_eth_emu2),            // input wire [31 : 0] B
-  .CLK(eth_rx_axis_usrclk),        // input wire CLK
-  .BYPASS(eth_emu_2_axis_usrrx_TLAST),  // input wire BYPASS: //active low
-  .SCLR(error_accumulator_clear),      // input wire SCLR : //clear accumulator
-  .Q(error_accumulated2)            // output wire [31 : 0] Q
+    .num_frames_recvd_V(num_frames_recvd_eth_emu2),              // output wire [31 : 0] num_frames_recvd_V
+    .num_errors_this_fr_V(num_errors_this_fr_eth_emu2),          // output wire [31 : 0] num_errors_this_fr_V
+    .total_bits_this_fr_V(total_bits_this_fr_eth_emu2),          // output wire [31 : 0] total_bits_this_fr_V
+    .num_errors_accumulated_V(eth_emu2_accumulated_error),  // output wire [63 : 0] num_errors_accumulated_V
+    .total_bits_accumulated_V(total_bits_accumulated_eth_emu2)  // output wire [63 : 0] total_bits_accumulated_V
 );
 
     if(1) begin : eth10g_emu_debug

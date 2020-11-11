@@ -98,6 +98,7 @@ module GTH_eth_10G_to_XG_PON_if(
     wire eth_axis_usrtx_TUSER;
     wire [3:0] eth_axis_usrtx_TKEEP;
     wire eth_tx_axis_usrclk;
+    wire eth_tx_axis_areset;
 
     wire [31:0] eth_axis_usrrx_TDATA;
     wire eth_axis_usrrx_TREADY;
@@ -106,8 +107,8 @@ module GTH_eth_10G_to_XG_PON_if(
     wire eth_axis_usrrx_TUSER;
     wire [3:0] eth_axis_usrrx_TKEEP;
     wire eth_rx_axis_usrclk;
+    wire eth_rx_axis_areset;
     
-    wire axis_usrtx_aresetn;
     //User DATA TxRx compatible with AXI streaming
     wire [31:0] axis_usrrx_TDATA;
     reg axis_usrrx_TREADY =1'b1;
@@ -119,8 +120,7 @@ module GTH_eth_10G_to_XG_PON_if(
     assign tx_clk_out_0 = eth_tx_axis_usrclk;
     assign rx_clk_out_0 = eth_rx_axis_usrclk;
     ///---------------------------------------------ends here
-    
-    assign axis_usrtx_aresetn = ~hb_gtwiz_reset_all; //TEMPORARY need to be changed
+        
     wire eth_sys_reset;
     wire eth_sys_reset_vio;
     assign eth_sys_reset = eth_sys_reset_phy; // eth_sys_reset_phy||eth_sys_reset_vio;   
@@ -136,12 +136,29 @@ module GTH_eth_10G_to_XG_PON_if(
        ); 
     
     wire xgpon_gt_clk_freerun_buf_int;
+    (* DONT_TOUCH = "TRUE" *)
     IBUFGDS 
       #(.DIFF_TERM("FALSE"))
     bufg_clk_freerun_inst(
           .I(xgpon_gt_clk_freerun_p),
           .IB(xgpon_gt_clk_freerun_n),
           .O(xgpon_gt_clk_freerun_buf_int)
+    );
+
+    //--synchronize the inverted eth_sys_reset signal into tx_usrclk2 domain for use in axis_usrtx_arersetn
+    (* DONT_TOUCH = "TRUE" *)
+    reset_sync reset_sync_eth_tx_axis_areset_inst (
+      .clk_in  (eth_tx_axis_usrclk),
+      .rst_in  (eth_sys_reset),
+      .rst_out (eth_tx_axis_areset)
+    );
+
+    //--synchronize the inverted reset_all signal into tx_usrclk2 domain for use in axis_usrtx_arersetn
+    (* DONT_TOUCH = "TRUE" *)
+    reset_sync reset_sync_axis_usrrx_areset_inst (
+      .clk_in  (eth_rx_axis_usrclk),
+      .rst_in  (eth_sys_reset),
+      .rst_out (eth_rx_axis_areset)
     );
 
     // ===================================================================================================================
@@ -276,16 +293,27 @@ module GTH_eth_10G_to_XG_PON_if(
         ,.gtwiz_reset_qpll1reset_out(gtwiz_reset_qpll1reset_out)
         ,.gtwiz_reset_all_0(gtwiz_reset_all_0)
     );
-
+    
+    wire [31:0] preamble_duration;
+    wire [31:0] preamble_pattern;
+    wire [31:0] frtrail_pattern;
+    vio_config_par_wrapper config_par_vio_inst(
+        .hb0_gtwiz_userclk_tx_usrclk2_int()
+        ,.vio_clk(eth_rx_axis_usrclk)
+        ,.vio_in1(1'b1)
+        ,.preamble_length_config_vio(preamble_duration) //output
+        ,.preamble_pattern_config_vio(preamble_pattern) //output
+        ,.frtrail_pattern_config_vio(frtrail_pattern)
+    );
     wire [31:0] xg_PON_axis_usrtx_TDATA;
     wire [3:0] xg_PON_axis_usrtx_TKEEP;
     wire xg_PON_axis_usrtx_TLAST;
     wire xg_PON_axis_usrtx_TUSER;
     wire xg_PON_axis_usrtx_TVALID;
-
-    add_XG_PON_header add_XG_PON_header_inst(
+    add_XgPON_header add_XG_PON_header_inst(
         .axis_clk(eth_rx_axis_usrclk)
-        ,.axis_reset(eth_sys_reset)
+        ,.axis_reset(eth_tx_axis_areset)
+        ,.enable(1'b1)
         
         ,.axis_TDATA_in(eth_axis_usrrx_TDATA)
         ,.axis_TVALID_in(eth_axis_usrrx_TVALID)
@@ -299,7 +327,10 @@ module GTH_eth_10G_to_XG_PON_if(
         ,.axis_TKEEP_out(xg_PON_axis_usrtx_TKEEP)
         ,.axis_TLAST_out(xg_PON_axis_usrtx_TLAST)
         ,.axis_TUSER_out(xg_PON_axis_usrtx_TUSER)
-        ,.axis_TREADY_in(1'b1)  
+        ,.axis_TREADY_in(1'b1) 
+        ,.preamble_duration(preamble_duration)
+        ,.preamble_pattern(preamble_pattern)
+        ,.frtrail_pattern(frtrail_pattern)
     );
 
     ////////////////////////////////////////////////////////////////////
@@ -307,6 +338,24 @@ module GTH_eth_10G_to_XG_PON_if(
     ////////////////////////////////////////////////////////////////////
     wire axis_aclk_gt_tx_usrclk;
     wire axis_aclk_gt_rx_usrclk;
+    wire axis_usrtx_aresetn;
+    wire axis_usrrx_aresetn;
+    //--synchronize the inverted reset_all signal into tx_usrclk2 domain for use in axis_usrtx_arersetn
+    (* DONT_TOUCH = "TRUE" *)
+    reset_sync reset_sync_axis_usrtx_aresetn_inst (
+      .clk_in  (axis_aclk_gt_tx_usrclk),
+      .rst_in  (~hb_gtwiz_reset_all),
+      .rst_out (axis_usrtx_aresetn)
+    );
+
+    //--synchronize the inverted reset_all signal into tx_usrclk2 domain for use in axis_usrtx_arersetn
+    (* DONT_TOUCH = "TRUE" *)
+    reset_sync reset_sync_axis_usrrx_aresetn_inst (
+      .clk_in  (axis_aclk_gt_rx_usrclk),
+      .rst_in  (~hb_gtwiz_reset_all),
+      .rst_out (axis_usrrx_aresetn)
+    );
+
     wire [31:0] xg_PON_axis_usrrx_TDATA;
     wire xg_PON_axis_usrrx_TVALID;
     wire xg_PON_axis_usrrx_TREADY;
@@ -317,10 +366,10 @@ module GTH_eth_10G_to_XG_PON_if(
     wire cdc_xg_PON_axis_usrtx_TLAST;
     
     (* DONT_TOUCH = "TRUE" *)
-    axis_ms_slv_loopback axis_fifo_inst(
+    axis_ms_slv_loopback eth10G_to_XgPON_cdc_fifo_inst(
         .axis_tx_clk                 (axis_aclk_gt_tx_usrclk)
         ,.axis_rx_clk                (eth_rx_axis_usrclk)
-        ,.axis_resetn                (~eth_sys_reset) //eth_sys_reset is a active high reset
+        ,.axis_resetn                (~eth_tx_axis_areset) //eth_sys_reset is a active high reset
     
         ,.slvlb_en_l2_addr_swap      (1'b0) // inputs to control the swap of first 12 bytes 
                                              // in the received ethernet frame.
@@ -355,8 +404,8 @@ module GTH_eth_10G_to_XG_PON_if(
         .ch0_gthtxn_out(xg_pon_burst_gt_txn_out),
         .ch0_gthtxp_out(xg_pon_burst_gt_txp_out),
         .hb_gtwiz_reset_clk_freerun_buf_int(xgpon_gt_clk_freerun_buf_int),
-        .hb_gtwiz_reset_all_in(hb_gtwiz_reset_all_in),
-        .hb_gtwiz_reset_all_out(hb_gtwiz_reset_all),
+        .hb_gtwiz_reset_all_in(hb_gtwiz_reset_all_in), //physical reset pin from board
+        .hb_gtwiz_reset_all_out(hb_gtwiz_reset_all),   //reset output to drive another block
         .gth_core_tx_usrclk2_out(axis_aclk_gt_tx_usrclk),
         .gth_core_rx_usrclk2_out(axis_aclk_gt_rx_usrclk),
         .link_down_latched_reset_in(link_down_latched_reset_in),
@@ -367,9 +416,11 @@ module GTH_eth_10G_to_XG_PON_if(
         .axis_usrtx_TLAST(cdc_xg_PON_axis_usrtx_TLAST),
         .axis_usrtx_TVALID(cdc_xg_PON_axis_usrtx_TVALID),
         .axis_usrtx_aresetn(axis_usrtx_aresetn),
+        .axis_usrrx_aresetn(axis_usrrx_aresetn),
         .axis_usrrx_TDATA(xg_PON_axis_usrrx_TDATA),
         .axis_usrrx_TREADY(1'b1),
         .axis_usrrx_TVALID(xg_PON_axis_usrrx_TVALID),
+        .preamble_pattern(preamble_pattern),
         .axis_aclk_gt_tx_usrclk(axis_aclk_gt_tx_usrclk),
         .axis_aclk_gt_rx_usrclk(axis_aclk_gt_rx_usrclk)
     );
@@ -384,13 +435,15 @@ module GTH_eth_10G_to_XG_PON_if(
     wire xg_PON_to_eth_axis_usrtx_TREADY;
     xg_PON_frame_sync xg_PON_frame_sync_inst(
         .clk_in             (axis_aclk_gt_rx_usrclk)
-        ,.reset_in          (eth_sys_reset)
+        ,.reset_in          (~axis_usrrx_aresetn) //axis_usrrx_aresetn is active low reset signal
     
         ,.axis_TDATA_in     (xg_PON_axis_usrrx_TDATA)
         ,.axis_TVALID_in    (xg_PON_axis_usrrx_TVALID)
         ,.axis_TKEEP_in     (4'd15)
         ,.axis_TLAST_in     (1'b0)
         ,.axis_TUSER_in     (1'b0)
+        ,.preamble_pattern  (preamble_pattern)
+        ,.preamble_duration (preamble_duration)
         ,.axis_TREADY_out   (xg_PON_axis_usrrx_TREADY)
     
         ,.axis_TDATA_out    (xg_PON_to_eth_axis_usrtx_TDATA)
@@ -403,10 +456,10 @@ module GTH_eth_10G_to_XG_PON_if(
 
 
     (* DONT_TOUCH = "TRUE" *)
-    axis_ms_slv_loopback axis_ms_slv_loopback_inst(
+    axis_ms_slv_loopback XgPON_to_eth10G_cdc_fifo_inst(
         .axis_tx_clk                (eth_tx_axis_usrclk)
         ,.axis_rx_clk                (axis_aclk_gt_rx_usrclk)
-        ,.axis_resetn                (~eth_sys_reset) //eth_sys_reset is a active high reset
+        ,.axis_resetn                (axis_usrrx_aresetn) //eth_sys_reset is a active high reset
     
         ,.slvlb_en_l2_addr_swap      (1'b0) // inputs to control the swap of first 12 bytes 
                                              // in the received ethernet frame.

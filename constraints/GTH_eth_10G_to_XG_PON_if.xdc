@@ -164,10 +164,10 @@ set_property IOSTANDARD LVCMOS18 [get_ports link_down_latched_reset_in]
 # ----------------------------------------------------------------------------------------------------------------------
 create_clock -period 4.000 -name clk_freerun [get_ports xgpon_gt_clk_freerun_p]
 
-set_property ADAPT_CFG1 16'h1000 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
-set_property DMONITOR_CFG1 8'h01 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
-set_property RXCDR_CFG0 16'h2000 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
-set_property RXCDR_CFG2 16'h0556 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+#set_property ADAPT_CFG1 16'h1000 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+#set_property DMONITOR_CFG1 8'h01 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+#set_property RXCDR_CFG0 16'h2000 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
+#set_property RXCDR_CFG2 16'h0556 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[6].*gen_gthe3_channel_inst[0].GTHE3_CHANNEL_PRIM_INST}]
 
 
 set_property ADAPT_CFG1 16'h801E [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
@@ -176,7 +176,7 @@ set_property RXCDR_CFG0 16'h0801 [get_cells -hierarchical -filter {NAME =~ *gen_
 set_property RXCDR_CFG1 16'h4A00 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
 set_property RXCDR_CFG2 16'h01D9 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
 set_property RXCDR_CFG4 16'h100A [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
-#set_property RXDFE_GC_CFG2 16'h0010 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
+set_property RXDFE_GC_CFG2 16'h0010 [get_cells -hierarchical -filter {NAME =~ *gen_channel_container[3].*gen_gtye3_channel_inst[0].GTYE3_CHANNEL_PRIM_INST}]
 
 
 create_clock -period 3.103 -name DMON_CLK -waveform {0.000 1.552} [get_pins -hierarchical -filter {NAME =~ */dmonClk_BUFG_0/O}]

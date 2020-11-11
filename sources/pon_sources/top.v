@@ -183,6 +183,19 @@ assign qpll1reset_out = powergood_out ? 1'b0 : 1'b1 ;
 
 
 wire dclk_buf_int;
+wire eth_sys_reset;
+wire eth_sys_reset_vio; 
+wire eth_sys_reset_vio_dclk_sync;
+//sync the eth_sys_reset in dclk domain
+assign eth_sys_reset = eth_sys_reset_phy||eth_sys_reset_vio_dclk_sync;
+
+(* DONT_TOUCH = "TRUE" *)     
+reset_sync reset_sync_eth_sys_reset_inst(
+    .clk_in    (dclk_buf_int),
+    .rst_in    (eth_sys_reset_vio),
+    .rst_out   (eth_sys_reset_vio_dclk_sync)
+  );
+
 
 (* DONT_TOUCH = "TRUE" *)
 gth_gtbnk230_sharedlogic_wrapper i_gth_gtbnk230_x0y24_x0y27_sharedlogic_wrapper(
@@ -245,7 +258,7 @@ gth_gtbnk230_sharedlogic_wrapper i_gth_gtbnk230_x0y24_x0y27_sharedlogic_wrapper(
     .usr_rx_reset_2 (user_rx_reset_2),
     .gtwiz_reset_all_2 (gtwiz_reset_all_2),
     
-    .sys_reset(eth_sys_reset_phy),
+    .sys_reset(eth_sys_reset),
     .dclk(dclk_buf_int)   
 );    
     
@@ -270,7 +283,8 @@ GTH_eth_10G_emulator GTH_eth_10G_emulator_inst(
     ,.eth_restart_tx_rx(eth_restart_tx_rx)
     ,.send_continous_pkts(send_continous_pkts)   // This port can be used to send continous packets 
         
-    ,.eth_sys_reset_phy(eth_sys_reset_phy)
+    ,.eth_sys_reset(eth_sys_reset)
+    ,.eth_sys_reset_vio(eth_sys_reset_vio)  //output from vio inside the emulator logic. bring the vio outside if you wish not to put the emulator inside the fpga design
     ,.dclk(dclk_buf_int)
     
     ////**--sharedlogic ports to bring to the top level--**////
@@ -357,10 +371,10 @@ GTH_eth_10G_to_XG_PON_if GTH_eth_10G_to_XG_PON_if_inst(
     ,.eth_rx_block_lock_led(eth_rx_block_lock_led)    // Indicates Core Block Lock
     ,.eth_completion_status(eth_completion_status)
 
-    ,.eth_sys_reset_phy(eth_sys_reset_phy)
+    ,.eth_sys_reset_phy(eth_sys_reset)
     ,.dclk_p(dclk_p)
     ,.dclk_n(dclk_n)
-    ,.dclk_buf_out(dclk_buf_int)
+    ,.dclk_buf_out(dclk_buf_int) //dclk buffered output. can be connected to other ethernet instances
     
     ,.xgpon_gt_clk_freerun_p(xgpon_gt_clk_freerun_p)
     ,.xgpon_gt_clk_freerun_n(xgpon_gt_clk_freerun_n)
@@ -396,6 +410,7 @@ GTH_eth_10G_to_XG_PON_if GTH_eth_10G_to_XG_PON_if_inst(
 );
 
 //Microblaze System controller instance
+/*if(0) begin
 Sys_Ctrl_wrapper Microblaze_Sys_Ctrl(
     .Microblaze_sys_clk_in(dclk_buf_int)
     ,.iic_fmc_hpc0_osc0_scl_io(iic_fmc_hpc0_osc0_scl)
@@ -408,6 +423,6 @@ Sys_Ctrl_wrapper Microblaze_Sys_Ctrl(
     ,.iic_main_sda_io(iic_main_sda)
     ,.reset(microblaze_reset)
 );
-
+end*/
 
 endmodule

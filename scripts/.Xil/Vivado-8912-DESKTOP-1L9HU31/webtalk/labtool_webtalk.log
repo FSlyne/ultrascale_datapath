@@ -1,0 +1,8 @@
+
+****** Webtalk v2017.3 (64-bit)
+  **** SW Build 2018833 on Wed Oct  4 19:58:22 MDT 2017
+  **** IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
+    ** Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+
+source c:/axi_eth_10g_to_PON_GTY/scripts/.Xil/Vivado-8912-DESKTOP-1L9HU31/webtalk/labtool_webtalk.tcl -notrace
+INFO: [Common 17-206] Exiting Webtalk at Wed Oct 21 11:30:56 2020...

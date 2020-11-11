@@ -1,10 +1,10 @@
 -- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2017.3 (win64) Build 2018833 Wed Oct  4 19:58:22 MDT 2017
--- Date        : Wed Oct 14 22:57:10 2020
+-- Date        : Mon Nov  9 00:23:57 2020
 -- Host        : DESKTOP-1L9HU31 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
---               E:/WorkingDir/newcon/axi_eth_10g_to_PON_FMC_GTH/sources/ip_sources/standard_rw_fifo/standard_rw_fifo_stub.vhdl
+--               E:/WorkingDir/axi_eth_10g_to_PON_GTHGTY/sources/ip_sources/standard_rw_fifo/standard_rw_fifo_stub.vhdl
 -- Design      : standard_rw_fifo
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xcvu095-ffva2104-2-e

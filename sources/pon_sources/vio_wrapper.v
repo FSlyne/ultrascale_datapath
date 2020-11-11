@@ -40,7 +40,10 @@ module vio_wrapper(
     ,output wire [0:0] hb0_gtwiz_reset_tx_datapath_int
     ,output wire [0:0] hb_gtwiz_reset_rx_pll_and_datapath_vio_int
     ,output wire [0:0] hb_gtwiz_reset_rx_datapath_vio_int
-    ,output wire [0:0] BCDR_in_sop
+    ,output wire [0:0] BCDR_SOP
+    ,output wire [0:0] BCDR_sop_sel_vio
+    ,output wire [0:0] Tx_PD_sel_vio
+    ,output wire [6:0] BCDR_SOP_det_th
     );
     
     // ===================================================================================================================
@@ -117,6 +120,28 @@ module vio_wrapper(
     .i_in   (gtwiz_buffbypass_rx_error_int[0]),
     .o_out  (gtwiz_buffbypass_rx_error_vio_sync[0])
   );
+    wire BCDR_in_SOP;
+  (* DONT_TOUCH = "TRUE" *)
+  bit_sync bit_sync_vio_BCDR_SOP_inst (
+    .clk_in (hb0_gtwiz_userclk_rx_usrclk2_int),
+    .i_in   (BCDR_in_SOP),
+    .o_out  (BCDR_SOP)
+  );
+    wire BCDR_sop_sel;
+  (* DONT_TOUCH = "TRUE" *)
+  bit_sync bit_sync_vio_BCDR_SOP_sel_inst (
+    .clk_in (hb0_gtwiz_userclk_rx_usrclk2_int),
+    .i_in   (BCDR_sop_sel),
+    .o_out  (BCDR_sop_sel_vio)
+  );
+
+    wire Tx_PD_sel;
+  (* DONT_TOUCH = "TRUE" *)
+  bit_sync bit_sync_vio_Tx_PD_sel_inst (
+    .clk_in (hb0_gtwiz_userclk_tx_usrclk2_int),
+    .i_in   (Tx_PD_sel),
+    .o_out  (Tx_PD_sel_vio)
+  );
 
     // Instantiate the VIO IP core for hardware bring-up and debug purposes, connecting relevant debug and analysis
     // signals which have been enabled during Wizard IP customization. This initial set of connected signals is
@@ -142,7 +167,10 @@ module vio_wrapper(
       ,.probe_out2 (hb0_gtwiz_reset_tx_datapath_int)
       ,.probe_out3 (hb_gtwiz_reset_rx_pll_and_datapath_vio_int)
       ,.probe_out4 (hb_gtwiz_reset_rx_datapath_vio_int)
-      ,.probe_out5 (BCDR_in_sop)
+      ,.probe_out5 (BCDR_in_SOP)
+      ,.probe_out6 (BCDR_sop_sel)
+      ,.probe_out7 (Tx_PD_sel)
+      ,.probe_out8(BCDR_SOP_det_th)
     );
     
 endmodule

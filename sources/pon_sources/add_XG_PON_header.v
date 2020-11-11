@@ -29,6 +29,7 @@
 module add_XG_PON_header(
     input axis_clk,
     input axis_reset,
+    input enable,
     
     input wire [31:0] axis_TDATA_in,
     input wire axis_TVALID_in,
@@ -42,7 +43,10 @@ module add_XG_PON_header(
     output wire [3:0] axis_TKEEP_out,
     output wire axis_TLAST_out,
     output wire axis_TUSER_out,
-    input wire axis_TREADY_in
+    input wire axis_TREADY_in,
+    input wire [31:0] preamble_duration,
+    input wire [31:0] preamble_pattern,
+    input wire [31:0] frtrail_pattern
 );
     
     //get the positive edge of the start and align it to one clock cycle
@@ -58,14 +62,14 @@ module add_XG_PON_header(
     reg en_out_next, stop;
     reg [31:0] count_reg, count_reg_next;
     
-    reg [31:0] enable_till = 32'd4;
+    //reg [31:0] enable_till = 32'd4;
     reg en_count; 
     reg [31:0] tdata = 32'h00000000;
     reg tvalid = 1'b0;
     reg [3:0] tkeep = 4'd0;
     reg tuser = 1'b0;
     reg tlast = 1'b0;
-    
+    //reg scrambler_rst =1'b0;
     //-----------Configurable Enable at posedge-START-----------//
     always@(posedge axis_clk) begin
         if (axis_reset || stop) begin
@@ -93,29 +97,32 @@ module add_XG_PON_header(
             en_out_next <= en_count;
         end
         
-        if (count_reg == enable_till)
+        if (count_reg == preamble_duration)
             stop <= 1;
         else
             stop <= 0; 
             
-        if (en_count && (count_reg<enable_till)) begin
-            tdata <= 32'h05560556;
+        if (en_count && (count_reg<preamble_duration)) begin
+            tdata <= preamble_pattern;
             tkeep <= 4'd15;
             tvalid <= 1'b1;
             tlast <= 1'b0;
             tuser <= 1'b0;
-        end else if(en_count && (count_reg==enable_till)) begin
+            //scrambler_rst<=1'b0;
+        end else if(en_count && (count_reg==preamble_duration)) begin
             tdata <= 32'hb2c50fa1;
             tkeep <= 4'd15;
             tvalid <= 1'b1;
             tlast <= 1'b0;
             tuser <= 1'b0;
+            //scrambler_rst<=1'b1;
         end else begin
             tdata <= 32'h00000000;
             tkeep <= 4'd0;
             tvalid <= 1'b0;
             tlast <= 1'b0;
-            tuser <= 1'b0;            
+            tuser <= 1'b0;
+            //scrambler_rst<=1'b0;          
         end
     end
     //-------------------------------------------------------------//
@@ -128,14 +135,25 @@ module add_XG_PON_header(
     wire axis_TLAST_delyd;
     wire axis_TUSER_delyd;
     wire axis_TREADY_delyd;
+    wire [8:0] delay_amount; 
+    assign delay_amount = preamble_duration[8:0]-1; // 1 clk cycle for scrambler
     //----------- variable delay line for AXIS ---//
     variableDelay variableDelay_inst (
-      .A(4'b0011),      // input wire [3 : 0] A
+      .A(delay_amount),      // input wire [3 : 0] A
       .D({axis_TDATA_in, axis_TVALID_in, axis_TKEEP_in, axis_TLAST_in, axis_TUSER_in}),      // input wire [37 : 0] D
       .CLK(axis_clk),  // input wire CLK
       .Q({axis_TDATA_delyd, axis_TVALID_delyd, axis_TKEEP_delyd, axis_TLAST_delyd, axis_TUSER_delyd})      // output wire [37 : 0] Q
     );
 
+    /*wire [31:0] axis_TDATA_scrambled;
+    scrambler scrambler_inst(
+        .data_in(axis_TDATA_delyd)
+        ,.scram_en(axis_TVALID_delyd)
+        ,.scram_rst(scrambler_rst)
+        ,.data_out(axis_TDATA_scrambled)
+        ,.rst(axis_reset)
+        ,.clk(axis_clk)
+    );*/
     wire [31:0] axis_TDATA;
     wire axis_TVALID;
     wire [3:0] axis_TKEEP;
@@ -177,7 +195,7 @@ module add_XG_PON_header(
     //We are assigh the pattern 32'h82D6 F416 as the frame trailer sequence to determine the 
     //frame end. this sequence is based on the grey coding. However, we can also use the generic
     //sequence 32'haaaaaaaa. which has some probability of occurance in the frame.
-    assign axis_TDATA_out = axis_TLAST_in_1clk_dely ? 32'h82D6F416 : axis_TDATA_L;
+    assign axis_TDATA_out = axis_TLAST_in_1clk_dely ? frtrail_pattern : axis_TDATA_L;
     assign axis_TVALID_out = axis_TLAST_in_1clk_dely ? 1'b1 : axis_TVALID_L;
     assign axis_TLAST_out = axis_TLAST_in_1clk_dely;
     assign axis_TKEEP_out = axis_TLAST_in_1clk_dely ? 4'hf : axis_TKEEP_L;

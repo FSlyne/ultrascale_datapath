@@ -31,7 +31,17 @@ module vio_top_wrapper(
 	,input wire eth_rx_gt_locked_led     // Indicates GT LOCK
     ,input wire eth_rx_block_lock_led    // Indicates Core Block Lock
     ,input wire [4:0] eth_completion_status
-
+    ,input wire [31:0] num_frames_recvd_eth_emu1
+    ,input wire [31:0] num_errors_this_fr_eth_emu1
+    ,input wire [31:0] total_bits_this_fr_eth_emu1
+    ,input wire [63:0] eth_emu1_accumulated_error
+    ,input wire [63:0] total_bits_accumulated_eth_emu1
+    
+    ,input wire [31:0] num_frames_recvd_eth_emu2
+    ,input wire [31:0] num_errors_this_fr_eth_emu2
+    ,input wire [31:0] total_bits_this_fr_eth_emu2
+    ,input wire [63:0] eth_emu2_accumulated_error
+    ,input wire [63:0] total_bits_accumulated_eth_emu2
     );
     
  
@@ -50,6 +60,17 @@ module vio_top_wrapper(
       ,.probe_in0(eth_rx_gt_locked_led)    // input wire [0 : 0] probe_in0
       ,.probe_in1(eth_rx_block_lock_led)    // input wire [0 : 0] probe_in1
       ,.probe_in2(eth_completion_status)    // input wire [4 : 0] probe_in2
+      ,.probe_in3(num_frames_recvd_eth_emu1)    // input wire [31 : 0] probe_in3
+      ,.probe_in4(num_errors_this_fr_eth_emu1)    // input wire [31 : 0] probe_in4
+      ,.probe_in5(total_bits_this_fr_eth_emu1)    // input wire [31 : 0] probe_in5
+      ,.probe_in6(eth_emu1_accumulated_error)    // input wire [63 : 0] probe_in6
+      ,.probe_in7(total_bits_accumulated_eth_emu1)    // input wire [63 : 0] probe_in7
+      ,.probe_in8(num_frames_recvd_eth_emu2)    // input wire [31 : 0] probe_in8
+      ,.probe_in9(num_errors_this_fr_eth_emu2)    // input wire [31 : 0] probe_in9
+      ,.probe_in10(total_bits_this_fr_eth_emu2)  // input wire [31 : 0] probe_in10
+      ,.probe_in11(eth_emu2_accumulated_error)  // input wire [63 : 0] probe_in11
+      ,.probe_in12(total_bits_accumulated_eth_emu2)  // input wire [63 : 0] probe_in12
+      
       ,.probe_out0 (error_accumulator_clear)
       ,.probe_out1 (preamble_length_vio_int)
       ,.probe_out2 (burst_length_vio_int)

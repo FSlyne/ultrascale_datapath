@@ -6,10 +6,6 @@
       <db_ref path="top_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="iic_pkg" />
-            <top_module name="ipif_pkg" />
-            <top_module name="lmb_bram_if_funcs" />
-            <top_module name="mdm_funcs" />
             <top_module name="top_tb" />
             <top_module name="vcomponents" />
          </top_modules>
@@ -17,14 +13,18 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="24262213001fs"></ZoomEndTime>
-      <Cursor1Time time="5991319998fs"></Cursor1Time>
+      <ZoomEndTime time="30000000001fs"></ZoomEndTime>
+      <Cursor1Time time="17328147000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="199"></NameColumnWidth>
-      <ValueColumnWidth column_width="64"></ValueColumnWidth>
+      <NameColumnWidth column_width="263"></NameColumnWidth>
+      <ValueColumnWidth column_width="81"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="136" />
+   <WVObjectSize size="141" />
+   <wave_markers>
+      <marker time="10992202000" label="" />
+      <marker time="10954002000" label="" />
+   </wave_markers>
    <wvobject fp_name="/top_tb/dclk" type="logic">
       <obj_property name="ElementShortName">dclk</obj_property>
       <obj_property name="ObjectShortName">dclk</obj_property>
@@ -36,6 +36,14 @@
    <wvobject fp_name="/top_tb/gt_refclk_n" type="logic">
       <obj_property name="ElementShortName">gt_refclk_n</obj_property>
       <obj_property name="ObjectShortName">gt_refclk_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/i_gth_gtbnk230_x0y24_x0y27_sharedlogic_wrapper/qpll0outclk" type="array">
+      <obj_property name="ElementShortName">qpll0outclk[0:0]</obj_property>
+      <obj_property name="ObjectShortName">qpll0outclk[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/i_gth_gtbnk230_x0y24_x0y27_sharedlogic_wrapper/qpll0outrefclk" type="array">
+      <obj_property name="ElementShortName">qpll0outrefclk[0:0]</obj_property>
+      <obj_property name="ObjectShortName">qpll0outrefclk[0:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/top_tb/eth_gtbnk230_x0y24_rxp_in" type="array">
       <obj_property name="ElementShortName">eth_gtbnk230_x0y24_rxp_in[0:0]</obj_property>
@@ -276,6 +284,10 @@
       <obj_property name="ElementShortName">gtwiz_userdata_rx_int[31:0]</obj_property>
       <obj_property name="ObjectShortName">gtwiz_userdata_rx_int[31:0]</obj_property>
    </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/BCDR_in_sop" type="array">
+      <obj_property name="ElementShortName">BCDR_in_sop[0:0]</obj_property>
+      <obj_property name="ObjectShortName">BCDR_in_sop[0:0]</obj_property>
+   </wvobject>
    <wvobject type="divider" fp_name="divider35">
       <obj_property name="label">10G eth_emu to Xg-pon eth_if axis-tx</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -330,17 +342,30 @@
       <obj_property name="ElementShortName">eth_axis_usrrx_TKEEP[3:0]</obj_property>
       <obj_property name="ObjectShortName">eth_axis_usrrx_TKEEP[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/numerrors_V" type="array">
-      <obj_property name="ElementShortName">numerrors_V[31:0]</obj_property>
-      <obj_property name="ObjectShortName">numerrors_V[31:0]</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/num_frames_recvd_eth_emu1" type="array">
+      <obj_property name="ElementShortName">num_frames_recvd_eth_emu1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">num_frames_recvd_eth_emu1[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/error_accumulated" type="array">
-      <obj_property name="ElementShortName">error_accumulated[31:0]</obj_property>
-      <obj_property name="ObjectShortName">error_accumulated[31:0]</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/num_errors_this_fr_eth_emu1" type="array">
+      <obj_property name="ElementShortName">num_errors_this_fr_eth_emu1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">num_errors_this_fr_eth_emu1[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/numerrors_V_ap_vld" type="logic">
-      <obj_property name="ElementShortName">numerrors_V_ap_vld</obj_property>
-      <obj_property name="ObjectShortName">numerrors_V_ap_vld</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/total_bits_this_fr_eth_emu1" type="array">
+      <obj_property name="ElementShortName">total_bits_this_fr_eth_emu1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">total_bits_this_fr_eth_emu1[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/eth_emu1_accumulated_error" type="array">
+      <obj_property name="ElementShortName">eth_emu1_accumulated_error[63:0]</obj_property>
+      <obj_property name="ObjectShortName">eth_emu1_accumulated_error[63:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/total_bits_accumulated_eth_emu1" type="array">
+      <obj_property name="ElementShortName">total_bits_accumulated_eth_emu1[63:0]</obj_property>
+      <obj_property name="ObjectShortName">total_bits_accumulated_eth_emu1[63:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/eth_emu_2_axis_usrrx_TDATA" type="array">
       <obj_property name="ElementShortName">eth_emu_2_axis_usrrx_TDATA[31:0]</obj_property>
@@ -358,13 +383,30 @@
       <obj_property name="ElementShortName">eth_emu_2_axis_usrrx_TKEEP[3:0]</obj_property>
       <obj_property name="ObjectShortName">eth_emu_2_axis_usrrx_TKEEP[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/numerrors_eth_emu2" type="array">
-      <obj_property name="ElementShortName">numerrors_eth_emu2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">numerrors_eth_emu2[31:0]</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/num_frames_recvd_eth_emu2" type="array">
+      <obj_property name="ElementShortName">num_frames_recvd_eth_emu2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">num_frames_recvd_eth_emu2[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/error_accumulated2" type="array">
-      <obj_property name="ElementShortName">error_accumulated2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">error_accumulated2[31:0]</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/num_errors_this_fr_eth_emu2" type="array">
+      <obj_property name="ElementShortName">num_errors_this_fr_eth_emu2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">num_errors_this_fr_eth_emu2[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/total_bits_this_fr_eth_emu2" type="array">
+      <obj_property name="ElementShortName">total_bits_this_fr_eth_emu2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">total_bits_this_fr_eth_emu2[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/eth_emu2_accumulated_error" type="array">
+      <obj_property name="ElementShortName">eth_emu2_accumulated_error[63:0]</obj_property>
+      <obj_property name="ObjectShortName">eth_emu2_accumulated_error[63:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_emulator_inst/total_bits_accumulated_eth_emu2" type="array">
+      <obj_property name="ElementShortName">total_bits_accumulated_eth_emu2[63:0]</obj_property>
+      <obj_property name="ObjectShortName">total_bits_accumulated_eth_emu2[63:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="divider" fp_name="divider63">
       <obj_property name="label">everything else</obj_property>
@@ -402,6 +444,10 @@
    <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/xg_PON_frame_sync_inst/preamble_detected" type="logic">
       <obj_property name="ElementShortName">preamble_detected</obj_property>
       <obj_property name="ObjectShortName">preamble_detected</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/xg_PON_frame_sync_inst/delim_det_enable" type="logic">
+      <obj_property name="ElementShortName">delim_det_enable</obj_property>
+      <obj_property name="ObjectShortName">delim_det_enable</obj_property>
    </wvobject>
    <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/xg_PON_frame_sync_inst/delimiter_detected" type="logic">
       <obj_property name="ElementShortName">delimiter_detected</obj_property>
@@ -465,82 +511,6 @@
       <obj_property name="ElementShortName">axis_TVALID_in_next</obj_property>
       <obj_property name="ObjectShortName">axis_TVALID_in_next</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/en_out_next" type="logic">
-      <obj_property name="ElementShortName">en_out_next</obj_property>
-      <obj_property name="ObjectShortName">en_out_next</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/stop" type="logic">
-      <obj_property name="ElementShortName">stop</obj_property>
-      <obj_property name="ObjectShortName">stop</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/count_reg" type="array">
-      <obj_property name="ElementShortName">count_reg[31:0]</obj_property>
-      <obj_property name="ObjectShortName">count_reg[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/count_reg_next" type="array">
-      <obj_property name="ElementShortName">count_reg_next[31:0]</obj_property>
-      <obj_property name="ObjectShortName">count_reg_next[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/enable_till" type="array">
-      <obj_property name="ElementShortName">enable_till[31:0]</obj_property>
-      <obj_property name="ObjectShortName">enable_till[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/en_count" type="logic">
-      <obj_property name="ElementShortName">en_count</obj_property>
-      <obj_property name="ObjectShortName">en_count</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/tdata" type="array">
-      <obj_property name="ElementShortName">tdata[31:0]</obj_property>
-      <obj_property name="ObjectShortName">tdata[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TDATA_delyd" type="array">
-      <obj_property name="ElementShortName">axis_TDATA_delyd[31:0]</obj_property>
-      <obj_property name="ObjectShortName">axis_TDATA_delyd[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TVALID_delyd" type="logic">
-      <obj_property name="ElementShortName">axis_TVALID_delyd</obj_property>
-      <obj_property name="ObjectShortName">axis_TVALID_delyd</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TKEEP_delyd" type="array">
-      <obj_property name="ElementShortName">axis_TKEEP_delyd[3:0]</obj_property>
-      <obj_property name="ObjectShortName">axis_TKEEP_delyd[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TLAST_delyd" type="logic">
-      <obj_property name="ElementShortName">axis_TLAST_delyd</obj_property>
-      <obj_property name="ObjectShortName">axis_TLAST_delyd</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TUSER_delyd" type="logic">
-      <obj_property name="ElementShortName">axis_TUSER_delyd</obj_property>
-      <obj_property name="ObjectShortName">axis_TUSER_delyd</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TREADY_delyd" type="logic">
-      <obj_property name="ElementShortName">axis_TREADY_delyd</obj_property>
-      <obj_property name="ObjectShortName">axis_TREADY_delyd</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TLAST_in_1clk_dely" type="logic">
-      <obj_property name="ElementShortName">axis_TLAST_in_1clk_dely</obj_property>
-      <obj_property name="ObjectShortName">axis_TLAST_in_1clk_dely</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TDATA" type="array">
-      <obj_property name="ElementShortName">axis_TDATA[31:0]</obj_property>
-      <obj_property name="ObjectShortName">axis_TDATA[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TVALID" type="logic">
-      <obj_property name="ElementShortName">axis_TVALID</obj_property>
-      <obj_property name="ObjectShortName">axis_TVALID</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TKEEP" type="array">
-      <obj_property name="ElementShortName">axis_TKEEP[3:0]</obj_property>
-      <obj_property name="ObjectShortName">axis_TKEEP[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TLAST" type="logic">
-      <obj_property name="ElementShortName">axis_TLAST</obj_property>
-      <obj_property name="ObjectShortName">axis_TLAST</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TUSER" type="logic">
-      <obj_property name="ElementShortName">axis_TUSER</obj_property>
-      <obj_property name="ObjectShortName">axis_TUSER</obj_property>
-   </wvobject>
    <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TDATA_out" type="array">
       <obj_property name="ElementShortName">axis_TDATA_out[31:0]</obj_property>
       <obj_property name="ObjectShortName">axis_TDATA_out[31:0]</obj_property>
@@ -548,6 +518,38 @@
    <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TVALID_out" type="logic">
       <obj_property name="ElementShortName">axis_TVALID_out</obj_property>
       <obj_property name="ObjectShortName">axis_TVALID_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/m_axis_TREADY" type="logic">
+      <obj_property name="ElementShortName">m_axis_TREADY</obj_property>
+      <obj_property name="ObjectShortName">m_axis_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/m_axis_TDATA" type="array">
+      <obj_property name="ElementShortName">m_axis_TDATA[31:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_TDATA[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/m_axis_TKEEP" type="array">
+      <obj_property name="ElementShortName">m_axis_TKEEP[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_TKEEP[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/m_axis_TLAST" type="logic">
+      <obj_property name="ElementShortName">m_axis_TLAST</obj_property>
+      <obj_property name="ObjectShortName">m_axis_TLAST</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_prog_full" type="logic">
+      <obj_property name="ElementShortName">axis_prog_full</obj_property>
+      <obj_property name="ObjectShortName">axis_prog_full</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/gem_read" type="logic">
+      <obj_property name="ElementShortName">gem_read</obj_property>
+      <obj_property name="ObjectShortName">gem_read</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_reset" type="logic">
+      <obj_property name="ElementShortName">axis_reset</obj_property>
+      <obj_property name="ObjectShortName">axis_reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/burst_now" type="logic">
+      <obj_property name="ElementShortName">burst_now</obj_property>
+      <obj_property name="ObjectShortName">burst_now</obj_property>
    </wvobject>
    <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TKEEP_out" type="array">
       <obj_property name="ElementShortName">axis_TKEEP_out[3:0]</obj_property>
@@ -557,24 +559,52 @@
       <obj_property name="ElementShortName">axis_TLAST_out</obj_property>
       <obj_property name="ObjectShortName">axis_TLAST_out</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TDATA_L" type="array">
-      <obj_property name="ElementShortName">axis_TDATA_L[31:0]</obj_property>
-      <obj_property name="ObjectShortName">axis_TDATA_L[31:0]</obj_property>
+   <wvobject type="divider" fp_name="divider451">
+      <obj_property name="label">cdc fifo rw control gt</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TVALID_L" type="logic">
-      <obj_property name="ElementShortName">axis_TVALID_L</obj_property>
-      <obj_property name="ObjectShortName">axis_TVALID_L</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_fifo_rw_control_inst/axis_in_TLAST" type="logic">
+      <obj_property name="ElementShortName">axis_in_TLAST</obj_property>
+      <obj_property name="ObjectShortName">axis_in_TLAST</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TKEEP_L" type="array">
-      <obj_property name="ElementShortName">axis_TKEEP_L[3:0]</obj_property>
-      <obj_property name="ObjectShortName">axis_TKEEP_L[3:0]</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_fifo_rw_control_inst/fifo_min_data_write_done" type="logic">
+      <obj_property name="ElementShortName">fifo_min_data_write_done</obj_property>
+      <obj_property name="ObjectShortName">fifo_min_data_write_done</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TLAST_L" type="logic">
-      <obj_property name="ElementShortName">axis_TLAST_L</obj_property>
-      <obj_property name="ObjectShortName">axis_TLAST_L</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_fifo_rw_control_inst/fifo_rd_enable" type="logic">
+      <obj_property name="ElementShortName">fifo_rd_enable</obj_property>
+      <obj_property name="ObjectShortName">fifo_rd_enable</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/add_XG_PON_header_inst/axis_TUSER_L" type="logic">
-      <obj_property name="ElementShortName">axis_TUSER_L</obj_property>
-      <obj_property name="ObjectShortName">axis_TUSER_L</obj_property>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_fifo_rw_control_inst/fifo_rd_en" type="logic">
+      <obj_property name="ElementShortName">fifo_rd_en</obj_property>
+      <obj_property name="ObjectShortName">fifo_rd_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_fifo_rw_control_inst/axis_in_TLAST_posedge" type="logic">
+      <obj_property name="ElementShortName">axis_in_TLAST_posedge</obj_property>
+      <obj_property name="ObjectShortName">axis_in_TLAST_posedge</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_usrtx_TDATA" type="array">
+      <obj_property name="ElementShortName">axis_usrtx_TDATA[31:0]</obj_property>
+      <obj_property name="ObjectShortName">axis_usrtx_TDATA[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_usrtx_TVALID" type="logic">
+      <obj_property name="ElementShortName">axis_usrtx_TVALID</obj_property>
+      <obj_property name="ObjectShortName">axis_usrtx_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/axis_usrtx_TREADY" type="logic">
+      <obj_property name="ElementShortName">axis_usrtx_TREADY</obj_property>
+      <obj_property name="ObjectShortName">axis_usrtx_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/m_axis_tvalid" type="logic">
+      <obj_property name="ElementShortName">m_axis_tvalid</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/m_axis_tdata" type="array">
+      <obj_property name="ElementShortName">m_axis_tdata[31:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axis_tdata[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_tb/top_DUT_inst/GTH_eth_10G_to_XG_PON_if_inst/Xg_PON_if_qsfp_gty/m_axis_usrtx_TLAST" type="logic">
+      <obj_property name="ElementShortName">m_axis_usrtx_TLAST</obj_property>
+      <obj_property name="ObjectShortName">m_axis_usrtx_TLAST</obj_property>
    </wvobject>
 </wave_config>

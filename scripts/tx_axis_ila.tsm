@@ -1,0 +1,24 @@
+##################################################
+#
+# For info on creating trigger state machines:
+#   1) In the main Vivado menu bar, select
+#      Window > Language Templates
+#   2) In the Templates window, select
+#      Debug > Trigger State Machine
+#   3) Refer to the entry 'Info' for an overview
+#      of the trigger state machine language.
+#
+# More information can be found in this document:
+#
+#   Vivado Design Suite User Guide: Programming
+#   and Debugging (UG908)
+#
+##################################################
+state waiting_state:
+if( GTH_eth_10G_to_XG_PON_if_inst/eth_axis_usrtx_TVALID == 1'bR) then #axis_ms_slv_loopback_inst/m_axis_slvlb_d_tvalid
+    goto trigger_state;
+else
+    goto waiting_state;
+endif
+state trigger_state:
+trigger;

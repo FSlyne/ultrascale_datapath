@@ -5,12 +5,13 @@
 
 #define PREAMBLE 0xAAAA
 void ControlledBurstCheck(bool enable,\
-		unsigned int burst_length,\
-		unsigned int burst_period,\
-		ap_uint<32>* TDATAin,\
-		ap_uint<4>* TKEEPin,\
+		ap_uint<32> TDATAin,\
 		bool TVALIDin,\
+		ap_uint<4> TKEEPin,\
 		bool TLASTin,\
-		ap_uint<32> *numerrors);
-
+		ap_uint<32> *num_frames_recvd,\
+		ap_uint<32> *num_errors_this_fr,\
+		ap_uint<32> *total_bits_this_fr,\
+		ap_uint<64> *num_errors_accumulated,\
+		ap_uint<64> *total_bits_accumulated);
 #endif

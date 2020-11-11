@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xd:acceleratorMap xmlns:xd="http://www.xilinx.com/xidane" xd:functionName="SOPDetect" xd:componentRef="SOPDetect" xd:initiationInterval="1" xd:clockPeriod="10.000000" xd:sequential="true" xd:hostMachine="64" xd:reset="control">
+  <xd:arg xd:name="enable" xd:originalName="enable" xd:direction="in" xd:interfaceRef="enable" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="TDATAin" xd:originalName="TDATAin" xd:direction="in" xd:interfaceRef="TDATAin_V" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="Thresholdin" xd:originalName="Thresholdin" xd:direction="in" xd:interfaceRef="Thresholdin_V" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="8"/>
+  <xd:arg xd:name="*(SOP_detected)" xd:originalName="SOP_detected" xd:direction="out" xd:interfaceRef="SOP_detected" xd:busTypeRef="register" xd:handshakeRef="ap_vld" xd:dataWidth="1" xd:firstOut="0"/>
+  <xd:arg xd:name="*(Packet_detected)" xd:originalName="Packet_detected" xd:direction="out" xd:interfaceRef="Packet_detected" xd:busTypeRef="register" xd:handshakeRef="ap_vld" xd:dataWidth="1" xd:firstOut="0"/>
+  <xd:latencyEstimates xd:best-case="0" xd:worst-case="0" xd:average-case="0"/>
+  <xd:resourceEstimates xd:LUT="521" xd:FF="6" xd:BRAM="0" xd:DSP="0"/>
+</xd:acceleratorMap>

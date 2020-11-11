@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Webtalk v2017.3 (64-bit)
+# SW Build 2018833 on Wed Oct  4 19:58:22 MDT 2017
+# IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
+# Start of session at: Wed Oct 21 11:30:55 2020
+# Process ID: 14244
+# Current directory: c:/axi_eth_10g_to_PON_GTY/scripts
+# Command line: wbtcv.exe -mode batch -source c:/axi_eth_10g_to_PON_GTY/scripts/.Xil/Vivado-8912-DESKTOP-1L9HU31/webtalk/labtool_webtalk.tcl -notrace
+# Log file: c:/axi_eth_10g_to_PON_GTY/scripts/webtalk.log
+# Journal file: c:/axi_eth_10g_to_PON_GTY/scripts\webtalk.jou
+#-----------------------------------------------------------
+source c:/axi_eth_10g_to_PON_GTY/scripts/.Xil/Vivado-8912-DESKTOP-1L9HU31/webtalk/labtool_webtalk.tcl -notrace

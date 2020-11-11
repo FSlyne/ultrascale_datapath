@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xd:acceleratorMap xmlns:xd="http://www.xilinx.com/xidane" xd:functionName="SOP_CDR_Control" xd:componentRef="SOP_CDR_Control" xd:initiationInterval="1" xd:clockPeriod="10.000000" xd:sequential="true" xd:hostMachine="64" xd:reset="control">
+  <xd:arg xd:name="enable" xd:originalName="enable" xd:direction="in" xd:interfaceRef="enable" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="TDATAin" xd:originalName="TDATAin" xd:direction="in" xd:interfaceRef="TDATAin_V" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="32"/>
+  <xd:arg xd:name="SOP_in" xd:originalName="SOP_in" xd:direction="in" xd:interfaceRef="SOP_in" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1"/>
+  <xd:arg xd:name="*(CDRHOLD_out)" xd:originalName="CDRHOLD_out" xd:direction="out" xd:interfaceRef="CDRHOLD_out" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1" xd:firstOut="1"/>
+  <xd:arg xd:name="*(PacketValid_out)" xd:originalName="PacketValid_out" xd:direction="out" xd:interfaceRef="PacketValid_out" xd:busTypeRef="register" xd:handshakeRef="ap_none" xd:dataWidth="1" xd:firstOut="1"/>
+  <xd:latencyEstimates xd:best-case="1" xd:worst-case="1" xd:average-case="1"/>
+  <xd:resourceEstimates xd:LUT="467" xd:FF="10" xd:BRAM="0" xd:DSP="0"/>
+</xd:acceleratorMap>
